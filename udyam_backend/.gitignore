@@ -6,7 +6,6 @@
 *.log
 *.pot
 *.pyc
-__pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -14,6 +13,7 @@ media
 .vscode/
 **/migrations
 *.DS_Store
+**/__pycache__
 **/.DS_Store
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
