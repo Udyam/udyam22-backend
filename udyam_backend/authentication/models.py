@@ -69,6 +69,18 @@ class UserModel(models.Model):
         null='False',
         validators=[MinLengthValidator(8),validate_password]
     )
+    
+    is_cleaned = False
+    def clean(self):
+        if(self.password!=self.confirm_password):
+            raise ValidationError('The password and confirm password are not same!')
+        else: self.is_cleaned=True
+
+    def save(self, *args, **kwargs):
+        if not self.is_cleaned:
+            self.clean()
+        super().save(*args, **kwargs)
+
 
     confirm_password = models.CharField(
         max_length=20,
@@ -85,3 +97,5 @@ class UserModel(models.Model):
 
     def __str__(self):
         return f'{self.username}'
+
+    
