@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'corsheaders',
-    'authentication',
+    'custom_auth',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +78,7 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'custom_auth.UserAccount'
 WSGI_APPLICATION = 'udyam_backend.wsgi.application'
 
 
