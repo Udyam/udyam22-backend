@@ -47,9 +47,9 @@ class UserAccount(AbstractBaseUser):
     is_active				= models.BooleanField(default=True)
     is_staff				= models.BooleanField(default=False)
     is_superuser			= models.BooleanField(default=False)
-    first_name              =models.CharField(max_length=30)
-    last_name              =models.CharField(max_length=30)
-    college_name = models.CharField(max_length=200,blank='False',null='False')
+    first_name              = models.CharField(max_length=30)
+    last_name               = models.CharField(max_length=30)
+    college_name = models.CharField(max_length=200,blank=False,null=False)
 
     YEARS=(
         ('ONE','1st year'),
@@ -58,24 +58,24 @@ class UserAccount(AbstractBaseUser):
         ('FOUR','4th year'),
 
     )
-    year = models.CharField(max_length=20,choices=YEARS,blank='False',null='False')
+    year = models.CharField(max_length=20,choices=YEARS,blank=False,null=False)
 
     GENDER=(
         ('M','Male'),
         ('F','Female'),
         ('O','Others'),
     )
-    gender = models.CharField(max_length=20,choices=GENDER,blank='False',null='False')
+    gender = models.CharField(max_length=20,choices=GENDER,blank=False,null=False)
 
     mobile_no=models.CharField(
         max_length=10,
-        blank='False',
-        null='False',
+        blank=False,
+        null=False,
         validators=[MinLengthValidator(10),validate_phone_number])
 
     # referral codes
-    user_referral_code = models.CharField(max_length=10,blank='False',null='False')
-    referral_code = models.CharField(max_length=10,blank='True',null='True')
+    user_referral_code = models.CharField(max_length=10,blank=False,null=False)
+    referral_code = models.CharField(max_length=10,blank=True,null=True)
     # verification check
     verified=models.BooleanField(default=False)
 
