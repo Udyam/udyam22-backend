@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 # Create your models here.
 def validate_phone_number(value):
-        if not value.isdigit():
+        if not value.isdigit() or len(value)!=10:
            raise ValidationError("Enter a valid phone number")
         else:
             return value
@@ -44,7 +44,7 @@ class UserAccount(AbstractBaseUser):
     date_joined				= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login				= models.DateTimeField(verbose_name='last login', auto_now=True)
     is_admin				= models.BooleanField(default=False)
-    is_active				= models.BooleanField(default=True)
+    is_active				= models.BooleanField(default=False)
     is_staff				= models.BooleanField(default=False)
     is_superuser			= models.BooleanField(default=False)
     first_name              =models.CharField(max_length=30)
@@ -76,8 +76,6 @@ class UserAccount(AbstractBaseUser):
     # referral codes
     user_referral_code = models.CharField(max_length=10,blank='False',null='False')
     referral_code = models.CharField(max_length=10,blank='True',null='True')
-    # verification check
-    verified=models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
