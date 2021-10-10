@@ -60,6 +60,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+'DEFAULT_AUTHENTICATION_CLASSES': (
+'rest_framework.authentication.TokenAuthentication',
+)
+}
+
 ROOT_URLCONF = 'udyam_backend.urls'
 
 TEMPLATES = [
@@ -79,6 +85,7 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = 'custom_auth.UserAccount'
+AUTHENTICATION_BACKENDS = ['custom_auth.backends.EmailOrUsernameModelBackend']
 WSGI_APPLICATION = 'udyam_backend.wsgi.application'
 
 
@@ -134,7 +141,6 @@ SWAGGER_SETTINGS = {
       }
    }
 }
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 

@@ -1,8 +1,9 @@
+from copy import error
 from django.shortcuts import render
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
-from .serializers import ResetPasswordEmailSerializer, NewPasswordSerializer,RegisterSerializer,check,LoginSerializer
-from .models import UserAccount
+from .serializers import ResetPasswordEmailSerializer, NewPasswordSerializer,RegisterSerializer,check,LoginSerializer,UserSerializer
+from .models import UserAccount,validate_phone_number
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str, smart_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -22,14 +23,14 @@ class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self,request):
-        username = request.data.get("username")
+        email_or_username = request.data.get("email_or_username")
         password = request.data.get("password")
-        if username is None or password is None:
+        if email_or_username is None or password is None:
             return Response({'error': 'Please provide both username and password'},
-                        status=400)
-        
-        user = authenticate(username=username, password=password)
-        if not user:
+                        status=400)      
+    
+        user = authenticate(username=email_or_username, password=password)
+        if not user or user.is_active==False:
             return Response({'error': 'User not authorized!'},
                         status=status.HTTP_401_UNAUTHORIZED)   
         login(request,user)
@@ -67,6 +68,9 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
         if UserAccount.objects.filter(email=email).exists():
             user = UserAccount.objects.get(email=email)
+            if user.is_active==False:
+                return Response({'error': 'User not authorized!'},
+                        status=status.HTTP_401_UNAUTHORIZED)
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             current_site = get_current_site(request=request).domain
@@ -81,6 +85,8 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
 
 class PasswordTokenCheckView(generics.GenericAPIView):
+    serializer_class = NewPasswordSerializer
+    
     def get(self, request, uidb64, token):
         try:
             id = smart_str(urlsafe_base64_decode(uidb64))
@@ -103,6 +109,50 @@ class NewPasswordView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password reset successful'}, status=status.HTTP_200_OK)
 
+
+class UserUpdateView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset=UserAccount.objects.all()
+    serializer_class=UserSerializer
+
+    def get(self,request):
+        try:
+            user=request.user
+            content={
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+                "gender": user.gender,
+                "year": user.year,
+                "mobile": user.mobile_no,
+                "college_name": user.college_name
+            }
+            return Response(content,status=status.HTTP_200_OK)
+        except:
+            return Response({"error":"An error occurred!"},status=status.HTTP_403_FORBIDDEN)
+
+
+
+    def post(self,request):
+        user=UserAccount.objects.filter(username=request.user.username)
+        if user is not None:
+            if 'first_name' in request.data:
+                user.update(first_name=request.data['first_name'])
+            if 'last_name' in request.data:
+                user.update(last_name=request.data['last_name'])
+            if 'gender' in request.data:
+                user.update(gender=request.data['gender'],)
+            if 'year' in request.data:
+                user.update(year=request.data['year'],)
+            if 'college_name' in request.data:
+                user.update(college_name=request.data['college_name'],)
+            if 'mobile' in request.data:
+                validate_phone_number(request.data['mobile'])
+                user.update(mobile_no=request.data['mobile'])
+            return Response({"message":"Updated successfully!"},status=status.HTTP_200_OK)
+        else:
+            return Response({"error":"An error occurred!"},status=status.HTTP_403_FORBIDDEN)
+
+
 class RegisterView(generics.GenericAPIView):
     queryset = UserAccount.objects.all()
     serializer_class=RegisterSerializer
@@ -120,7 +170,7 @@ class RegisterView(generics.GenericAPIView):
                 relativeLink = reverse('activate-account', kwargs={'uidb64': uidb64, 'token': token})
                 absurl = 'http://' + current_site + relativeLink
                 email_body = 'Hello '+user.username+',\nUse this link to activate your account: \n'+absurl
-                data = {'email_body': email_body, 'to_mail': user.email, 'email_subject': 'Reset Your Udyam Password'}
+                data = {'email_body': email_body, 'to_mail': user.email, 'email_subject': 'Activate Your Udyam Password'}
                 Util.send_email(data)
                 return Response({'success': 'Verification link has been sent by email!'}, status=status.HTTP_200_OK)
             else:
@@ -141,6 +191,11 @@ class ActivateAccountView(generics.GenericAPIView):
                 return Response({'error': 'Invalid token! Try again.'}, status=status.HTTP_401_UNAUTHORIZED)
             user.is_active=True
             user.save()
+            if(user.referral_code):
+                user=self.queryset.get(user_referral_code=user.referral_code)
+                if user is not None:
+                    user.referral_count+=1
+                    user.save()
             return Response({'message': 'Account verified.'}, status=status.HTTP_200_OK)
 
         except DjangoUnicodeDecodeError as identifier:
