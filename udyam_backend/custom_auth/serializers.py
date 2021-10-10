@@ -10,10 +10,10 @@ from rest_framework.validators import UniqueValidator
 import random
 
 class LoginSerializer(serializers.ModelSerializer):
-    # TODO: Implement login functionality
+    email_or_username = serializers.CharField()
     class Meta:
         model = UserAccount
-        fields = ('username', 'password')
+        fields = ('email_or_username', 'password')
         
 class ResetPasswordEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -86,6 +86,11 @@ class RegisterSerializer(serializers.Serializer):
     college_name = serializers.CharField(
             required=True
             )
+    referral_code = serializers.CharField(
+            required=False,
+            allow_blank=True,
+            allow_null=True
+            )
     class Meta:
         model = UserAccount
         fields = '__all__'
@@ -102,8 +107,46 @@ class RegisterSerializer(serializers.Serializer):
         user.year=validated_data['year']
         user.college_name=validated_data['college_name']
         user.mobile_no=validated_data['mobile']
+        user.referral_code=validated_data['referral_code']
         user.user_referral_code= user.first_name[0:min(len(user.first_name),5)]
         user.user_referral_code+=str(random.randint(10001,99999))
         user.save()
         return user
 
+class UserSerializer(serializers.Serializer):
+    first_name = serializers.CharField(
+            required=True
+            )
+    last_name = serializers.CharField(
+            required=True
+            )
+    gender = serializers.CharField(
+            required=True
+            )
+    year = serializers.CharField(
+            required=True
+            )
+    mobile = serializers.CharField(
+            required=True,
+            validators=[validate_phone_number]
+            )
+    college_name = serializers.CharField(
+            required=True
+            )
+    class Meta:
+        model = UserAccount
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = UserAccount.objects.get(
+            username=validated_data['username'],
+        )
+        user.first_name=validated_data['first_name']
+        user.last_name=validated_data['last_name']
+        user.gender=validated_data['gender']
+        user.year=validated_data['year']
+        user.college_name=validated_data['college_name']
+        user.mobile_no=validated_data['mobile']
+        user.referral_code=validated_data['referral_code']
+        user.save()
+        return user
