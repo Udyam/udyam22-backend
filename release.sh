@@ -1,9 +1,2 @@
-if [[ -n $HEROKU ]]; then
-    pip install -r requirements/prod.txt
-fi
-
-if [[ -n $DEBUG ]]; then
-    pip install -r requirements/dev.txt
-fi
-
+# release commands to be run on every deployment
 python manage.py migrate --noinput
