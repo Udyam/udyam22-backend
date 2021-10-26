@@ -8,7 +8,7 @@ exclude =
     venv,
     .env,
     .vscode,
-    migrations
+    */migrations/*
 
 ignore =
     F401,
