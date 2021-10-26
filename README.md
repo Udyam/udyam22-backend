@@ -8,11 +8,18 @@ For starting the project first time :
 4. Create a pull request (PR)
 
 Setting up the project(Backend) :
-1. Make sure python3.8 and pip are installed. Install pipenv by running pip install pipenv.
-2. Install python dependencies using the command pipenv install Please use only pipenv for managing dependencies (Follow this link if you are new to pipenv).
-3. To activate this project's virtualenv, run pipenv shell.
-4. Run python manage.py migrate to apply migrations.
-5. Start the development server using python manage.py runserver
+
+1. Initial setup:
+install virtual environment
+`python -m venv venv`
+activate virtual environment
+linux:`source venv/bin/activate`  
+windows: `./venv/Scripts/activate`
+2. install dependencies
+`pip install -r requirements/dev.txt`
+
+3. apply migrations: `python manage.py migrate`
+4. Start the development server using `python manage.py runserver`
 
 For Uptading work after some PRs are merged :
 1. Commit your changes (if any)

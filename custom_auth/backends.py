@@ -12,7 +12,7 @@ class EmailOrUsernameModelBackend(ModelBackend):
         users = user_model._default_manager.filter(
             Q(**{user_model.USERNAME_FIELD: username}) | Q(email__iexact=username)
         )
-        for user in users :
+        for user in users:
             if user.check_password(password):
                 return user
         if not users:
