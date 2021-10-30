@@ -41,7 +41,8 @@ class LoginView(generics.GenericAPIView):
         password = request.data.get("password")
         if email_or_username is None or password is None:
             return Response(
-                {"error": "Please provide both username and password"}, status=400
+                {"error": "Please provide both username and password"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user = authenticate(username=email_or_username, password=password)
@@ -82,7 +83,6 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = ResetPasswordEmailSerializer
 
     def post(self, request):
-        # serializer = self.serializer_class(data=request.data)
 
         email = request.data["email"]
 
