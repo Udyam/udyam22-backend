@@ -11,7 +11,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate
 from django.contrib.auth import login,logout
 from django.urls import reverse
-from .utils import Util
+from .utils import Util,part1,part2,part3,part4
 from rest_framework.authtoken.models import Token
 
 class LoginView(generics.GenericAPIView):
@@ -76,7 +76,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             current_site = get_current_site(request=request).domain
             relativeLink = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
             absurl = 'http://' + current_site + relativeLink
-            email_body = 'Hello '+user.username+',\nUse this link to reset your password: \n'+absurl
+            email_body = part1+user.username+part2+'Click on the button to  reset your password: '+part3+absurl+part4
             data = {'email_body': email_body, 'to_mail': user.email, 'email_subject': 'Reset Your Udyam Password'}
             Util.send_email(data)
             return Response({'success': 'Link has been sent by email to reset password'}, status=status.HTTP_200_OK)
@@ -169,7 +169,7 @@ class RegisterView(generics.GenericAPIView):
                 current_site = get_current_site(request=request).domain
                 relativeLink = reverse('activate-account', kwargs={'uidb64': uidb64, 'token': token})
                 absurl = 'http://' + current_site + relativeLink
-                email_body = 'Hello '+user.username+',\nUse this link to activate your account: \n'+absurl
+                email_body = part1+user.username+part2+'Click on the button to activate your account:'+part3+absurl+part4
                 data = {'email_body': email_body, 'to_mail': user.email, 'email_subject': 'Activate Your Udyam Password'}
                 Util.send_email(data)
                 return Response({'success': 'Verification link has been sent by email!'}, status=status.HTTP_200_OK)
