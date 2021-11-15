@@ -48,8 +48,6 @@ part4="""'>Verify Now</a>
 </body>
 </html>"""
 
-
-
 class Util:
     @staticmethod
     def send_email(data):

@@ -23,7 +23,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.urls import reverse
-from .utils import Util
+from .utils import Util,part1,part2,part3,part4
 from rest_framework.authtoken.models import Token
 
 
@@ -101,10 +101,13 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             )
             absurl = "http://" + current_site + relativeLink
             email_body = (
-                "Hello "
+                part1
                 + user.username
+                +part2
                 + ",\nUse this link to reset your password: \n"
+                +part3
                 + absurl
+                +part4
             )
             data = {
                 "email_body": email_body,
@@ -238,10 +241,13 @@ class RegisterView(generics.GenericAPIView):
                 )
                 absurl = "http://" + current_site + relativeLink
                 email_body = (
-                    "Hello "
+                    part1
                     + user.username
+                    +part2
                     + ",\nUse this link to activate your account: \n"
+                    +part3
                     + absurl
+                    +part4
                 )
                 data = {
                     "email_body": email_body,
