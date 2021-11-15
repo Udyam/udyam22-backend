@@ -84,7 +84,7 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = "custom_auth.UserAccount"
-AUTHENTICATION_BACKENDS = ["custom_auth.backends.EmailOrUsernameModelBackend"]
+AUTHENTICATION_BACKENDS = ["custom_auth.backends.EmailBackend"]
 WSGI_APPLICATION = "udyam_backend.wsgi.application"
 
 

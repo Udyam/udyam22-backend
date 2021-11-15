@@ -8,15 +8,15 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.validators import UniqueValidator
 
-from .models import UserAccount, validate_phone_number
+from .models import UserAccount
 
 
 class LoginSerializer(serializers.ModelSerializer):
-    email_or_username = serializers.CharField()
+    email = serializers.CharField()
 
     class Meta:
         model = UserAccount
-        fields = ("email_or_username", "password")
+        fields = ("email", "password")
 
 
 class ResetPasswordEmailSerializer(serializers.Serializer):
@@ -55,7 +55,7 @@ class NewPasswordSerializer(serializers.Serializer):
 
 
 def check(data):
-    return authenticate(username=data["username"], password=data["password"])
+    return authenticate(email=data["email"], password=data["password"])
 
 
 class TokenSerializer(serializers.Serializer):
@@ -67,15 +67,9 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(
         required=True, validators=[UniqueValidator(queryset=UserAccount.objects.all())]
     )
-    username = serializers.CharField(
-        required=True, validators=[UniqueValidator(queryset=UserAccount.objects.all())]
-    )
     password = serializers.CharField(write_only=True, required=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
-    gender = serializers.CharField(required=True)
+    name = serializers.CharField(required=True)
     year = serializers.CharField(required=True)
-    mobile = serializers.CharField(required=True, validators=[validate_phone_number])
     college_name = serializers.CharField(required=True)
     referral_code = serializers.CharField(
         required=False, allow_blank=True, allow_null=True
@@ -87,29 +81,23 @@ class RegisterSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = UserAccount.objects.create_user(
-            username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
         )
-        user.first_name = validated_data["first_name"]
-        user.last_name = validated_data["last_name"]
-        user.gender = validated_data["gender"]
+        user.name = validated_data["name"]
         user.year = validated_data["year"]
         user.college_name = validated_data["college_name"]
-        user.mobile_no = validated_data["mobile"]
         user.referral_code = validated_data["referral_code"]
-        user.user_referral_code = user.first_name[: min(len(user.first_name), 5)]
+        user.user_referral_code = (user.name).replace(" ", "").lower()[: min(len(user.name), 5)]
         user.user_referral_code += str(random.randint(10001, 99999))
         user.save()
         return user
 
 
 class UserSerializer(serializers.Serializer):
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
+    name = serializers.CharField(required=True)
     gender = serializers.CharField(required=True)
     year = serializers.CharField(required=True)
-    mobile = serializers.CharField(required=True, validators=[validate_phone_number])
     college_name = serializers.CharField(required=True)
 
     class Meta:
@@ -118,14 +106,10 @@ class UserSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = UserAccount.objects.get(
-            username=validated_data["username"],
+            email=validated_data["email"],
         )
-        user.first_name = validated_data["first_name"]
-        user.last_name = validated_data["last_name"]
-        user.gender = validated_data["gender"]
+        user.name = validated_data["name"]
         user.year = validated_data["year"]
         user.college_name = validated_data["college_name"]
-        user.mobile_no = validated_data["mobile"]
-        user.referral_code = validated_data["referral_code"]
         user.save()
         return user

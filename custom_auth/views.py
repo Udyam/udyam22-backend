@@ -10,7 +10,7 @@ from .serializers import (
     LoginSerializer,
     UserSerializer,
 )
-from .models import UserAccount, validate_phone_number
+from .models import UserAccount
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
     force_str,
@@ -29,23 +29,22 @@ from rest_framework.authtoken.models import Token
 
 class LoginView(generics.GenericAPIView):
     """
-    TODO:
-    Implement login functionality, taking username and password
+    Implement login functionality, taking email and password
     as input, and returning the Token.
     """
 
     serializer_class = LoginSerializer
 
     def post(self, request):
-        email_or_username = request.data.get("email_or_username")
+        email = request.data.get("email")
         password = request.data.get("password")
-        if email_or_username is None or password is None:
+        if email is None or password is None:
             return Response(
-                {"error": "Please provide both username and password"},
+                {"error": "Please provide both email and password"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = authenticate(username=email_or_username, password=password)
+        user = authenticate(email=email, password=password)
         if not user or user.is_active == False:
             return Response(
                 {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
@@ -102,7 +101,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             absurl = "http://" + current_site + relativeLink
             email_body = (
                 part1
-                + user.username
+                + user.name
                 +part2
                 + ",\nUse this link to reset your password: \n"
                 +part3
@@ -178,12 +177,11 @@ class UserUpdateView(generics.GenericAPIView):
         try:
             user = request.user
             content = {
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "gender": user.gender,
-                "year": user.year,
-                "mobile": user.mobile_no,
+                "name": user.name,
+                "email": user.email,
                 "college_name": user.college_name,
+                "year": user.year,
+                "referral_code": user.user_referral_code,
             }
             return Response(content, status=status.HTTP_200_OK)
         except:
@@ -192,16 +190,10 @@ class UserUpdateView(generics.GenericAPIView):
             )
 
     def post(self, request):
-        user = UserAccount.objects.filter(username=request.user.username)
+        user = UserAccount.objects.filter(email=request.user.email)
         if user is not None:
-            if "first_name" in request.data:
-                user.update(first_name=request.data["first_name"])
-            if "last_name" in request.data:
-                user.update(last_name=request.data["last_name"])
-            if "gender" in request.data:
-                user.update(
-                    gender=request.data["gender"],
-                )
+            if "name" in request.data:
+                user.update(name=request.data["name"])
             if "year" in request.data:
                 user.update(
                     year=request.data["year"],
@@ -210,9 +202,6 @@ class UserUpdateView(generics.GenericAPIView):
                 user.update(
                     college_name=request.data["college_name"],
                 )
-            if "mobile" in request.data:
-                validate_phone_number(request.data["mobile"])
-                user.update(mobile_no=request.data["mobile"])
             return Response(
                 {"message": "Updated successfully!"}, status=status.HTTP_200_OK
             )
@@ -242,7 +231,7 @@ class RegisterView(generics.GenericAPIView):
                 absurl = "http://" + current_site + relativeLink
                 email_body = (
                     part1
-                    + user.username
+                    + user.name
                     +part2
                     + ",\nUse this link to activate your account: \n"
                     +part3
