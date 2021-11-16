@@ -43,8 +43,9 @@ class LoginView(generics.GenericAPIView):
 
         user = authenticate(email=email, password=password)
         if not user or user.is_active:
-            return Response({"error": "User not authorized!"},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
+            )
         login(request, user)
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"token": token.key})
@@ -56,7 +57,7 @@ class LogoutView(generics.GenericAPIView):
     Implement logout functionality, logout the user.
     """
 
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = LoginSerializer
 
     def get(self, request):
@@ -91,15 +92,19 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             current_site = get_current_site(request=request).domain
-            relativeLink = reverse("password-reset-confirm",
-                                   kwargs={
-                                       "uidb64": uidb64,
-                                       "token": token
-                                   })
+            relativeLink = reverse(
+                "password-reset-confirm", kwargs={"uidb64": uidb64, "token": token}
+            )
             absurl = "http://" + current_site + relativeLink
-            email_body = (part1 + user.name + part2 +
-                          ",\nUse this link to reset your password: \n" +
-                          part3 + absurl + part4)
+            email_body = (
+                part1
+                + user.name
+                + part2
+                + ",\nUse this link to reset your password: \n"
+                + part3
+                + absurl
+                + part4
+            )
             data = {
                 "email_body": email_body,
                 "to_mail": user.email,
@@ -155,16 +160,13 @@ class NewPasswordView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(
-            {
-                "success": True,
-                "message": "Password reset successful"
-            },
+            {"success": True, "message": "Password reset successful"},
             status=status.HTTP_200_OK,
         )
 
 
 class UserUpdateView(generics.GenericAPIView):
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = UserAccount.objects.all()
     serializer_class = UserSerializer
 
@@ -180,8 +182,9 @@ class UserUpdateView(generics.GenericAPIView):
             }
             return Response(content, status=status.HTTP_200_OK)
         except serializers.get_error_detail:
-            return Response({"error": "An error occurred!"},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
+            )
 
     def post(self, request):
         user = UserAccount.objects.filter(email=request.user.email)
@@ -189,14 +192,20 @@ class UserUpdateView(generics.GenericAPIView):
             if "name" in request.data:
                 user.update(name=request.data["name"])
             if "year" in request.data:
-                user.update(year=request.data["year"], )
+                user.update(
+                    year=request.data["year"],
+                )
             if "college_name" in request.data:
-                user.update(college_name=request.data["college_name"], )
-            return Response({"message": "Updated successfully!"},
-                            status=status.HTTP_200_OK)
+                user.update(
+                    college_name=request.data["college_name"],
+                )
+            return Response(
+                {"message": "Updated successfully!"}, status=status.HTTP_200_OK
+            )
         else:
-            return Response({"error": "An error occurred!"},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
+            )
 
 
 class RegisterView(generics.GenericAPIView):
@@ -213,15 +222,19 @@ class RegisterView(generics.GenericAPIView):
                 uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
                 token = PasswordResetTokenGenerator().make_token(user)
                 current_site = get_current_site(request=request).domain
-                relativeLink = reverse("activate-account",
-                                       kwargs={
-                                           "uidb64": uidb64,
-                                           "token": token
-                                       })
+                relativeLink = reverse(
+                    "activate-account", kwargs={"uidb64": uidb64, "token": token}
+                )
                 absurl = "http://" + current_site + relativeLink
-                email_body = (part1 + user.name + part2 +
-                              ",\nUse this link to activate your account: \n" +
-                              part3 + absurl + part4)
+                email_body = (
+                    part1
+                    + user.name
+                    + part2
+                    + ",\nUse this link to activate your account: \n"
+                    + part3
+                    + absurl
+                    + part4
+                )
                 data = {
                     "email_body": email_body,
                     "to_mail": user.email,
@@ -239,8 +252,9 @@ class RegisterView(generics.GenericAPIView):
                 )
         else:
             # print(serializer.errors)
-            return Response({"error": serializer.errors},
-                            status=status.HTTP_409_CONFLICT)
+            return Response(
+                {"error": serializer.errors}, status=status.HTTP_409_CONFLICT
+            )
 
 
 class ActivateAccountView(generics.GenericAPIView):
@@ -264,8 +278,7 @@ class ActivateAccountView(generics.GenericAPIView):
                 if user is not None:
                     user.referral_count += 1
                     user.save()
-            return Response({"message": "Account verified."},
-                            status=status.HTTP_200_OK)
+            return Response({"message": "Account verified."}, status=status.HTTP_200_OK)
 
         except DjangoUnicodeDecodeError:
             return Response(
