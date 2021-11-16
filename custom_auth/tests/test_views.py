@@ -16,27 +16,19 @@ class TestView(TestCase):
 
         self.credentials_user1 = {
             "email": "test_user1@example.com",
-            "username": "test_user1",
             "password": "test_password1",
         }
         self.test_user1 = UserAccount.objects.create_user(**self.credentials_user1)
-        self.test_user1.first_name = "test_user1_first_name"
-        self.test_user1.last_name = "test_user1_last_name"
-        self.test_user1.gender = "Female"
+        self.test_user1.name = "test_user1_name"
         self.test_user1.year = "2nd year"
-        self.test_user1.mobile = "9411123411"
         self.test_user1.college_name = "IIT BHU"
         self.test_user1.save()
 
         self.credentials_user2 = {
             "email": "test_user2@example.com",
-            "username": "test_user2",
             "password": "test_password2",
-            "first_name": "test_user2_first_name",
-            "last_name": "test_user2_last_name",
-            "gender": "Female",
+            "name": "test_user2_name",
             "year": "2nd year",
-            "mobile": "9411123411",
             "college_name": "IIT BHU",
             "referral_code": "",
         }
@@ -67,7 +59,7 @@ class TestView(TestCase):
     def test_login_view_401(self):
         response = self.client.post(
             self.login_url,
-            {"email_or_username": "test_user1", "password": "test_password1"},
+            {"email": "test_user1@example.com", "password": "test_password1"},
         )
         self.assertEqual(response.status_code, 401)
 
@@ -87,25 +79,15 @@ class TestView(TestCase):
         response = self.client.post(self.register_url, self.credentials_user2)
         self.assertEqual(response.status_code, 200)
 
-    # Invalid user credentials
-    def test_register_view_POST_invalid_credentials(self):
-        self.credentials_user2["mobile"] = "94998aby99"
-        response = self.client.post(self.register_url, self.credentials_user2)
-        self.assertEqual(response.status_code, 409)
-
     # User with given credentials already exists
     def test_register_view_POST_same_credentials(self):
         response = self.client.post(
             self.register_url,
             {
                 "email": "test_user1@example.com",
-                "username": "test_user1",
                 "password": "test_password1",
-                "first_name": "test_user1_first_name",
-                "last_name": "test_user1_last_name",
-                "gender": "Female",
+                "name": "test_user1_name",
                 "year": "2nd year",
-                "mobile": "9411123411",
                 "college_name": "IIT BHU",
                 "referral_code": "",
             },
@@ -199,6 +181,6 @@ class TestView(TestCase):
         self.client.force_authenticate(user=self.test_user1)
         response = self.client.post(
             self.update_url,
-            {"last_name": "test_user1_last_name_update", "mobile": "9876543210"},
+            {"name": "test_user1_name_update"},
         )
         self.assertEqual(response.status_code, 200)
