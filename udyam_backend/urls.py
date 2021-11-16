@@ -39,6 +39,8 @@ if settings.DEBUG:
             name="schema-swagger-ui",
         ),
         path(
-            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+            "redoc/",
+            schema_view.with_ui("redoc", cache_timeout=0),
+            name="schema-redoc"
         ),
     ]

@@ -1,5 +1,3 @@
-from copy import error
-from django.shortcuts import render
 from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
 from .serializers import (
@@ -13,7 +11,6 @@ from .serializers import (
 from .models import UserAccount
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
-    force_str,
     smart_str,
     smart_bytes,
     DjangoUnicodeDecodeError,
@@ -23,7 +20,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.urls import reverse
-from .utils import Util,part1,part2,part3,part4
+from .utils import Util, part1, part2, part3, part4
 from rest_framework.authtoken.models import Token
 
 
@@ -45,9 +42,10 @@ class LoginView(generics.GenericAPIView):
             )
 
         user = authenticate(email=email, password=password)
-        if not user or user.is_active == False:
+        if not user or user.is_active:
             return Response(
-                {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
+                {"error": "User not authorized!"},
+                status=status.HTTP_401_UNAUTHORIZED
             )
         login(request, user)
         token, _ = Token.objects.get_or_create(user=user)
@@ -87,7 +85,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
         if UserAccount.objects.filter(email=email).exists():
             user = UserAccount.objects.get(email=email)
-            if user.is_active == False:
+            if user.is_active:
                 return Response(
                     {"error": "User not authorized!"},
                     status=status.HTTP_401_UNAUTHORIZED,
@@ -96,17 +94,18 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             token = PasswordResetTokenGenerator().make_token(user)
             current_site = get_current_site(request=request).domain
             relativeLink = reverse(
-                "password-reset-confirm", kwargs={"uidb64": uidb64, "token": token}
+                "password-reset-confirm",
+                kwargs={"uidb64": uidb64, "token": token}
             )
             absurl = "http://" + current_site + relativeLink
             email_body = (
                 part1
                 + user.name
-                +part2
+                + part2
                 + ",\nUse this link to reset your password: \n"
-                +part3
+                + part3
                 + absurl
-                +part4
+                + part4
             )
             data = {
                 "email_body": email_body,
@@ -184,9 +183,10 @@ class UserUpdateView(generics.GenericAPIView):
                 "referral_code": user.user_referral_code,
             }
             return Response(content, status=status.HTTP_200_OK)
-        except:
+        except serializers.get_error_detail:
             return Response(
-                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
+                {"error": "An error occurred!"},
+                status=status.HTTP_403_FORBIDDEN
             )
 
     def post(self, request):
@@ -203,11 +203,13 @@ class UserUpdateView(generics.GenericAPIView):
                     college_name=request.data["college_name"],
                 )
             return Response(
-                {"message": "Updated successfully!"}, status=status.HTTP_200_OK
+                {"message": "Updated successfully!"},
+                status=status.HTTP_200_OK
             )
         else:
             return Response(
-                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
+                {"error": "An error occurred!"},
+                status=status.HTTP_403_FORBIDDEN
             )
 
 
@@ -226,17 +228,18 @@ class RegisterView(generics.GenericAPIView):
                 token = PasswordResetTokenGenerator().make_token(user)
                 current_site = get_current_site(request=request).domain
                 relativeLink = reverse(
-                    "activate-account", kwargs={"uidb64": uidb64, "token": token}
+                    "activate-account",
+                    kwargs={"uidb64": uidb64, "token": token}
                 )
                 absurl = "http://" + current_site + relativeLink
                 email_body = (
                     part1
                     + user.name
-                    +part2
+                    + part2
                     + ",\nUse this link to activate your account: \n"
-                    +part3
+                    + part3
                     + absurl
-                    +part4
+                    + part4
                 )
                 data = {
                     "email_body": email_body,
@@ -281,7 +284,8 @@ class ActivateAccountView(generics.GenericAPIView):
                 if user is not None:
                     user.referral_count += 1
                     user.save()
-            return Response({"message": "Account verified."}, status=status.HTTP_200_OK)
+            return Response({"message": "Account verified."},
+                            status=status.HTTP_200_OK)
 
         except DjangoUnicodeDecodeError:
             return Response(

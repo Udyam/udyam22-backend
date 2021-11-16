@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.core.validators import MinLengthValidator
-from django.core.exceptions import ValidationError
 
 
 class AccountManager(BaseUserManager):
@@ -30,7 +28,10 @@ class AccountManager(BaseUserManager):
 
 class UserAccount(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
+    date_joined = models.DateTimeField(
+        verbose_name="date joined",
+        auto_now_add=True
+    )
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -43,10 +44,19 @@ class UserAccount(AbstractBaseUser):
         ("THREE", "3rd year"),
         ("FOUR", "4th year"),
     )
-    year = models.CharField(max_length=20, choices=YEARS, blank=False, null=False)
+    year = models.CharField(
+        max_length=20,
+        choices=YEARS,
+        blank=False,
+        null=False
+    )
 
     # referral codes
-    user_referral_code = models.CharField(max_length=10, blank=False, null=False)
+    user_referral_code = models.CharField(
+        max_length=10,
+        blank=False,
+        null=False
+    )
     referral_code = models.CharField(max_length=10, blank=True, null=True)
     referral_count = models.IntegerField(default=0)
 
@@ -62,6 +72,6 @@ class UserAccount(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         return self.is_admin
 
-    # Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
+    # Does this user have permission to view this app?
     def has_module_perms(self, app_label):
         return True
