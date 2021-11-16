@@ -44,8 +44,7 @@ class LoginView(generics.GenericAPIView):
         user = authenticate(email=email, password=password)
         if not user or user.is_active:
             return Response(
-                {"error": "User not authorized!"},
-                status=status.HTTP_401_UNAUTHORIZED
+                {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
             )
         login(request, user)
         token, _ = Token.objects.get_or_create(user=user)
@@ -94,8 +93,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             token = PasswordResetTokenGenerator().make_token(user)
             current_site = get_current_site(request=request).domain
             relativeLink = reverse(
-                "password-reset-confirm",
-                kwargs={"uidb64": uidb64, "token": token}
+                "password-reset-confirm", kwargs={"uidb64": uidb64, "token": token}
             )
             absurl = "http://" + current_site + relativeLink
             email_body = (
@@ -185,8 +183,7 @@ class UserUpdateView(generics.GenericAPIView):
             return Response(content, status=status.HTTP_200_OK)
         except serializers.get_error_detail:
             return Response(
-                {"error": "An error occurred!"},
-                status=status.HTTP_403_FORBIDDEN
+                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
             )
 
     def post(self, request):
@@ -203,13 +200,11 @@ class UserUpdateView(generics.GenericAPIView):
                     college_name=request.data["college_name"],
                 )
             return Response(
-                {"message": "Updated successfully!"},
-                status=status.HTTP_200_OK
+                {"message": "Updated successfully!"}, status=status.HTTP_200_OK
             )
         else:
             return Response(
-                {"error": "An error occurred!"},
-                status=status.HTTP_403_FORBIDDEN
+                {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
             )
 
 
@@ -228,8 +223,7 @@ class RegisterView(generics.GenericAPIView):
                 token = PasswordResetTokenGenerator().make_token(user)
                 current_site = get_current_site(request=request).domain
                 relativeLink = reverse(
-                    "activate-account",
-                    kwargs={"uidb64": uidb64, "token": token}
+                    "activate-account", kwargs={"uidb64": uidb64, "token": token}
                 )
                 absurl = "http://" + current_site + relativeLink
                 email_body = (
@@ -284,8 +278,7 @@ class ActivateAccountView(generics.GenericAPIView):
                 if user is not None:
                     user.referral_count += 1
                     user.save()
-            return Response({"message": "Account verified."},
-                            status=status.HTTP_200_OK)
+            return Response({"message": "Account verified."}, status=status.HTTP_200_OK)
 
         except DjangoUnicodeDecodeError:
             return Response(

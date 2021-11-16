@@ -14,7 +14,6 @@ ignore =
     F401,
     E712,
     E722,
-    E501,
     W503
-    
+
 max-line-length = 150

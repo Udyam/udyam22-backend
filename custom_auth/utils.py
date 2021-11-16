@@ -40,21 +40,23 @@ part1 = """<html lang="en">
 part2 = """!</h3><h3>"""
 part3 = """</h3>
     <a href='"""
-part4 = """'>Verify Now</a>
+part4 = (
+    """'>Verify Now</a>
     <h3>Please ignore if not filled by you.</h3>
     </div>
-    <span style="color: #FFF; display: none; font-size: 8px;">""" + str(datetime.now()) + """</span>
+    <span style="color: #FFF; display: none; font-size: 8px;">"""
+    + str(datetime.now())
+    + """</span>
 </body>
 </html>"""
+)
 
 
 class Util:
     @staticmethod
     def send_email(data):
         email = EmailMessage(
-            subject=data['email_subject'],
-            body=data['email_body'],
-            to=[data['to_mail']]
+            subject=data["email_subject"], body=data["email_body"], to=[data["to_mail"]]
         )
-        email.content_subtype = 'html'
+        email.content_subtype = "html"
         email.send()

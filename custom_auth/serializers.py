@@ -65,8 +65,7 @@ class TokenSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.Serializer):
     # TODO: Implement register functionality
     email = serializers.EmailField(
-        required=True,
-        validators=[UniqueValidator(queryset=UserAccount.objects.all())]
+        required=True, validators=[UniqueValidator(queryset=UserAccount.objects.all())]
     )
     password = serializers.CharField(write_only=True, required=True)
     name = serializers.CharField(required=True)
@@ -90,7 +89,7 @@ class RegisterSerializer(serializers.Serializer):
         user.college_name = validated_data["college_name"]
         user.referral_code = validated_data["referral_code"]
         name = (user.name).replace(" ", "").lower()
-        user.user_referral_code = name[:min(len(user.name), 5)]
+        user.user_referral_code = name[: min(len(user.name), 5)]
         user.user_referral_code += str(random.randint(10001, 99999))
         user.save()
         return user

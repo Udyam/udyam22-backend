@@ -28,10 +28,7 @@ class AccountManager(BaseUserManager):
 
 class UserAccount(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    date_joined = models.DateTimeField(
-        verbose_name="date joined",
-        auto_now_add=True
-    )
+    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -44,19 +41,10 @@ class UserAccount(AbstractBaseUser):
         ("THREE", "3rd year"),
         ("FOUR", "4th year"),
     )
-    year = models.CharField(
-        max_length=20,
-        choices=YEARS,
-        blank=False,
-        null=False
-    )
+    year = models.CharField(max_length=20, choices=YEARS, blank=False, null=False)
 
     # referral codes
-    user_referral_code = models.CharField(
-        max_length=10,
-        blank=False,
-        null=False
-    )
+    user_referral_code = models.CharField(max_length=10, blank=False, null=False)
     referral_code = models.CharField(max_length=10, blank=True, null=True)
     referral_count = models.IntegerField(default=0)
 
