@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Workshop, Event, NoticeBoard
@@ -28,26 +28,23 @@ class WorkshopView(generics.GenericAPIView):
         return Response(response_body, status=status.HTTP_200_OK)
 
 
-class GetAllNoticeView(generics.GenericAPIView):
+class GetAllNoticeView(generics.ListAPIView):
     serializer_class = NoticeBoardSerializer
 
-    def get(self, request):
-        response_body = []
-        all_notice = NoticeBoard.objects.all()
+    def list(self, request):
+        all_notice = NoticeBoard.objects.all().order_by('-date')
         serializer = NoticeBoardSerializer(all_notice, many=True)
-        for notice in serializer.data:
-            response_body.append(notice)
 
-        return Response(response_body, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
 
-class GetNoticeByIdView(generics.GenericAPIView):
+class GetNoticeByIdView(generics.RetrieveAPIView):
     serializer_class = NoticeBoardSerializer
 
-    def get(self, request, id):
-        try:
-            notice = NoticeBoard.objects.get(id=id)
-            serializer = NoticeBoardSerializer(notice)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response({"error": "Notice with the given id doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
+    def retrieve(self, request, id):
+        all_notice = NoticeBoard.objects.all()
+        notice = get_object_or_404(all_notice, pk=id)
+        serializer = NoticeBoardSerializer(notice)
+        
+        return Response(serializer.data)
+
