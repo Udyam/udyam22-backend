@@ -3,6 +3,7 @@ from .models import Workshop, NoticeBoard
 
 
 class WorkshopSerializer(serializers.ModelSerializer):
+    event = serializers.StringRelatedField()
 
     class Meta:
         model = Workshop

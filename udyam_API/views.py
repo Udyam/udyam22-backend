@@ -1,31 +1,19 @@
-from django.shortcuts import get_object_or_404, render
-from rest_framework import generics, permissions, status
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, permissions
 from rest_framework.response import Response
-from .models import Workshop, Event, NoticeBoard
+from .models import Workshop, NoticeBoard
 from .serializers import WorkshopSerializer, NoticeBoardSerializer
 
 
-class WorkshopView(generics.GenericAPIView):
+class WorkshopView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = WorkshopSerializer
 
-    def get(self, request):
-        response_body = []
-        workshops = Workshop.objects.all()
+    def list(self, request):
+        workshops = Workshop.objects.all().order_by('-date')
         serializer = WorkshopSerializer(workshops, many=True)
-        for w in serializer.data:
-            workshop = Workshop.objects.get(id=w['id'])
-            event = Event.objects.get(id=w['event'])
-            event_name = event.eventname
-            response_body.append({
-                "id": workshop.id,
-                "date": workshop.date,
-                "time": workshop.time,
-                "url": workshop.url,
-                "event": event_name,
-            })
 
-        return Response(response_body, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
 
 class GetAllNoticeView(generics.ListAPIView):

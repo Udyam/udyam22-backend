@@ -15,7 +15,7 @@ class Event(models.Model):
         ('I-Chip', 'I-Chip')
     ]
 
-    eventname = models.CharField(max_length=20, choices=eventnames, default='SL')
+    eventname = models.CharField(max_length=20, choices=eventnames, default='SL', unique=True)
     members_from_1st_year = models.IntegerField()
     members_after_1st_year = models.IntegerField()
     score = models.IntegerField(blank=True, null=True)
