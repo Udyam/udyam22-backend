@@ -45,6 +45,5 @@ class GetNoticeByIdView(generics.RetrieveAPIView):
         all_notice = NoticeBoard.objects.all()
         notice = get_object_or_404(all_notice, pk=id)
         serializer = NoticeBoardSerializer(notice)
-        
-        return Response(serializer.data)
 
+        return Response(serializer.data)
