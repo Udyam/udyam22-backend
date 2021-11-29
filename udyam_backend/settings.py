@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "custom_auth",
     "addons",
+    "udyam_API",
 ]
 
 MIDDLEWARE = [
