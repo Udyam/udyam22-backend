@@ -1,6 +1,4 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.response import Response
 from .models import Workshop, NoticeBoard
 from .serializers import WorkshopSerializer, NoticeBoardSerializer
 

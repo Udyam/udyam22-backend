@@ -2,23 +2,9 @@ from django.db import models
 
 
 class Event(models.Model):
-    eventnames = [
-        ('SL', 'Select Event'),
-        ('Mosaic', 'Mosaic'),
-        ('Spybits', 'Spybits'),
-        ('Digisim', 'Digisim'),
-        ('Continuum', 'Continuum'),
-        ('Cassandra', 'Cassandra'),
-        ('Commnet', 'Commnet'),
-        ('Funckit', 'Funckit'),
-        ('X-IoT-A', 'X-IoT-A'),
-        ('I-Chip', 'I-Chip')
-    ]
-
-    eventname = models.CharField(max_length=20, choices=eventnames, default='SL', unique=True)
+    eventname = models.CharField(max_length=20, unique=True)
     members_from_1st_year = models.IntegerField()
     members_after_1st_year = models.IntegerField()
-    score = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.eventname
