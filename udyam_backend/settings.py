@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "corsheaders",
     "custom_auth",
+    "addons",
 ]
 
 MIDDLEWARE = [
