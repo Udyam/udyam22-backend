@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_cleanup.apps.CleanupConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
@@ -141,7 +142,10 @@ SWAGGER_SETTINGS = {
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+MEDIA_URL = "/images/"
+
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
