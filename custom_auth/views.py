@@ -41,8 +41,8 @@ class LoginView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = authenticate(email=email, password=password)
-        if not user or user.is_active:
+        user = authenticate(username=email, password=password)
+        if not user or user.is_active == False:
             return Response(
                 {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
             )

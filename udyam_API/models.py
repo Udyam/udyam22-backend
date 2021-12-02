@@ -1,4 +1,5 @@
 from django.db import models
+from custom_auth.models import UserAccount
 
 
 class Event(models.Model):
@@ -17,7 +18,7 @@ class Workshop(models.Model):
     url = models.URLField(max_length=200)
 
     def __str__(self):
-        string = str(self.event) + ', ' + str(self.date)
+        string = str(self.event) + ", " + str(self.date)
         return string
 
 
@@ -28,3 +29,27 @@ class NoticeBoard(models.Model):
 
     def str(self):
         return f"{self.title}"
+
+
+class Team(models.Model):
+    teamname = models.CharField(max_length=30)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    leader = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
+    member1 = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="member1",
+    )
+    member2 = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="member2",
+    )
+    submission = models.CharField(max_length=40, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.event} - {self.teamname}"
