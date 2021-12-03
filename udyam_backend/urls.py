@@ -15,12 +15,13 @@ schema_view = get_schema_view(
         description="This is the Udyam Site API.",
     ),
     public=True,
-    permission_classes=(permissions.AllowAny, ),
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("custom_auth.urls")),
+    path("user/", include("addons.urls")),
     path("API/", include("udyam_API.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
@@ -37,7 +38,12 @@ if settings.DEBUG:
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
-        path("redoc/",
-             schema_view.with_ui("redoc", cache_timeout=0),
-             name="schema-redoc"),
+        path(
+            "user/",
+            schema_view.with_ui("swagger", cache_timeout=0),
+            name="schema-swagger-ui",
+        ),
+        path(
+            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+        ),
     ]
