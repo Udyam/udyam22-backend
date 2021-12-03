@@ -25,6 +25,22 @@ def checks(request):
             else None
         )
         event_teams = Team.objects.filter(event=event)
+        first_yearites = 0
+        second_yearites = 0
+        if leader.year == "ONE":
+            first_yearites += 1
+        else:
+            second_yearites += 1
+        if member1:
+            if member1.year == "ONE":
+                first_yearites += 1
+            else:
+                second_yearites += 1
+        if member2:
+            if member2.year == "ONE":
+                first_yearites += 1
+            else:
+                second_yearites += 1
     except Event.DoesNotExist:
         return "Event does not exist"
     except UserAccount.DoesNotExist:
@@ -41,7 +57,7 @@ def checks(request):
         return "Single user cannot be present twice in the team"
     elif leader != request.user and member1 != request.user and member2 != request.user:
         return "Requesting user must be a member of the team. Cannot create a team which you are not a part of."
-    elif Team.objects.filter(teamname=request.data["teamname"]).count():
+    elif Team.objects.filter(teamname=request.data["teamname"], event=event).count():
         return "Team name already taken"
     elif (
         event_teams.filter(leader=leader).count()
@@ -61,6 +77,21 @@ def checks(request):
         or event_teams.filter(member2=member2).count()
     ):
         return "Member 2 already has a team in this event"
+    elif (
+        second_yearites != 0
+        and first_yearites + second_yearites > event.members_after_1st_year
+    ):
+        return (
+            "Max size of a not-all-1st-yearites team is "
+            + str(event.members_after_1st_year)
+            + " for this event"
+        )
+    elif second_yearites == 0 and first_yearites > event.members_from_1st_year:
+        return (
+            "Max size of a all-1st-yearites team is "
+            + str(event.members_from_1st_year)
+            + " for this event"
+        )
 
 
 class WorkshopView(generics.ListAPIView):
@@ -95,7 +126,10 @@ class TeamCreateView(generics.GenericAPIView):
         if message:
             return Response({"error": message}, status=status.HTTP_403_FORBIDDEN)
         serializer.save()
-        team = Team.objects.get(teamname=request.data["teamname"])
+        team = Team.objects.get(
+            teamname=request.data["teamname"],
+            event=Event.objects.get(id=request.data["event"]),
+        )
         team_info = {
             "teamname": team.teamname,
             "event": team.event.eventname,
