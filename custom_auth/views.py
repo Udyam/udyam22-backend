@@ -84,7 +84,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
         if UserAccount.objects.filter(email=email).exists():
             user = UserAccount.objects.get(email=email)
-            if user.is_active == False:
+            if not user.is_active:
                 return Response(
                     {"error": "User not authorized!"},
                     status=status.HTTP_401_UNAUTHORIZED,
