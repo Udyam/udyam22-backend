@@ -50,6 +50,19 @@ class TestView(TestCase):
         self.password_reset_confirm_url2 = reverse(
             "password-reset-confirm", args=["some-uidb64", "some-token"])
 
+    # Valid user login
+    def test_login_view_200(self):
+        self.test_user1.is_active = True
+        self.test_user1.save()
+        response = self.client.post(
+            self.login_url,
+            {
+                "email": "test_user1@example.com",
+                "password": "test_password1"
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
     # Invalid user login
     def test_login_view_401(self):
         response = self.client.post(
