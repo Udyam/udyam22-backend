@@ -16,8 +16,7 @@ class TestView(TestCase):
             "email": "test_user1@example.com",
             "password": "test_password1",
         }
-        self.test_user1 = UserAccount.objects.create_user(
-            **self.credentials_user1)
+        self.test_user1 = UserAccount.objects.create_user(**self.credentials_user1)
         self.test_user1.name = "test_user1_name"
         self.test_user1.year = "2nd year"
         self.test_user1.college_name = "IIT BHU"
@@ -40,24 +39,25 @@ class TestView(TestCase):
         self.logout_url = reverse("logout")
         self.update_url = reverse("update")
         self.register_url = reverse("register")
-        self.activate_account_url1 = reverse("activate-account",
-                                             args=[self.uidb64, self.token])
+        self.activate_account_url1 = reverse(
+            "activate-account", args=[self.uidb64, self.token]
+        )
         self.activate_account_url2 = reverse(
-            "activate-account", args=["some-uidb64", "some-token"])
+            "activate-account", args=["some-uidb64", "some-token"]
+        )
         self.password_reset_email_url = reverse("password-reset-email")
         self.password_reset_confirm_url1 = reverse(
-            "password-reset-confirm", args=[self.uidb64, self.token])
+            "password-reset-confirm", args=[self.uidb64, self.token]
+        )
         self.password_reset_confirm_url2 = reverse(
-            "password-reset-confirm", args=["some-uidb64", "some-token"])
+            "password-reset-confirm", args=["some-uidb64", "some-token"]
+        )
 
     # Invalid user login
     def test_login_view_401(self):
         response = self.client.post(
             self.login_url,
-            {
-                "email": "test_user1@example.com",
-                "password": "test_password1"
-            },
+            {"email": "test_user1@example.com", "password": "test_password1"},
         )
         self.assertEqual(response.status_code, 401)
 
@@ -105,20 +105,23 @@ class TestView(TestCase):
     # Password reset: email is valid and user is active
     def test_password_reset_email_view_POST_200(self):
         self.client.get(self.activate_account_url1)
-        response = self.client.post(self.password_reset_email_url,
-                                    {"email": "test_user1@example.com"})
+        response = self.client.post(
+            self.password_reset_email_url, {"email": "test_user1@example.com"}
+        )
         self.assertEqual(response.status_code, 200)
 
     # Password reset: email is valid and user is not active
     def test_password_reset_email_view_POST_401(self):
-        response = self.client.post(self.password_reset_email_url,
-                                    {"email": "test_user1@example.com"})
+        response = self.client.post(
+            self.password_reset_email_url, {"email": "test_user1@example.com"}
+        )
         self.assertEqual(response.status_code, 401)
 
     # Password reset: email is invalid
     def test_password_reset_email_view_POST_400(self):
-        response = self.client.post(self.password_reset_email_url,
-                                    {"email": "test_us@example.com"})
+        response = self.client.post(
+            self.password_reset_email_url, {"email": "test_us@example.com"}
+        )
         self.assertEqual(response.status_code, 400)
 
     # Valid arguments (uidb64, token)
@@ -135,11 +138,7 @@ class TestView(TestCase):
     def test_new_password_successfully_set(self):
         response = self.client.patch(
             reverse("password-reset-complete"),
-            {
-                "password": "NewPassword123",
-                "token": self.token,
-                "uidb64": self.uidb64
-            },
+            {"password": "NewPassword123", "token": self.token, "uidb64": self.uidb64},
         )
         self.assertEqual(response.status_code, 200)
 
