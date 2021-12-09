@@ -22,6 +22,9 @@ from django.contrib.auth import login, logout
 from django.urls import reverse
 from .utils import Util, part1, part2, part3, part4
 from rest_framework.authtoken.models import Token
+from .google import gmail
+from apiclient import discovery
+import httplib2
 
 
 class LoginView(generics.GenericAPIView):
@@ -240,7 +243,21 @@ class RegisterView(generics.GenericAPIView):
                     "to_mail": user.email,
                     "email_subject": "Activate Your Udyam Password",
                 }
-                Util.send_email(data)
+                message = gmail.create_message(
+                    "backend.testing21@gmail.com",
+                    data["to_mail"],
+                    data["email_subject"],
+                    data["email_body"],
+                )
+                credentials = gmail.get_credentials()
+                gmail.send_message(
+                    discovery.build(
+                        "gmail", "v1", http=credentials.authorize(httplib2.Http())
+                    ),
+                    "me",
+                    message["raw"],
+                )
+                # Util.send_email(data)
                 return Response(
                     {"success": "Verification link has been sent by email!"},
                     status=status.HTTP_200_OK,
