@@ -12,15 +12,15 @@ from custom_auth.models import UserAccount
 
 def checks(request):
     try:
-        event = Event.objects.get(id=request.data["event"])
-        leader = UserAccount.objects.get(id=request.data["leader"])
+        event = Event.objects.get(eventname=request.data["event"])
+        leader = UserAccount.objects.get(email=request.data["leader"])
         member1 = (
-            UserAccount.objects.get(id=request.data["member1"])
+            UserAccount.objects.get(email=request.data["member1"])
             if request.data["member1"]
             else None
         )
         member2 = (
-            UserAccount.objects.get(id=request.data["member2"])
+            UserAccount.objects.get(email=request.data["member2"])
             if request.data["member2"]
             else None
         )
@@ -128,7 +128,7 @@ class TeamCreateView(generics.GenericAPIView):
         serializer.save()
         team = Team.objects.get(
             teamname=request.data["teamname"],
-            event=Event.objects.get(id=request.data["event"]),
+            event=Event.objects.get(eventname=request.data["event"]),
         )
         team_info = {
             "teamname": team.teamname,
@@ -202,18 +202,18 @@ class TeamView(generics.GenericAPIView):
     def patch(self, request, id):
         try:
             team = Team.objects.get(id=id)
-            event = Event.objects.get(id=request.data["event"])
-            leader = UserAccount.objects.get(id=request.data["leader"])
+            event = Event.objects.get(eventname=request.data["event"])
+            leader = UserAccount.objects.get(email=request.data["leader"])
             team.teamname = request.data["teamname"]
             team.event = event
             team.leader = leader
             team.member1 = (
-                UserAccount.objects.get(id=request.data["member1"])
+                UserAccount.objects.get(email=request.data["member1"])
                 if request.data["member1"] != ""
                 else None
             )
             team.member2 = (
-                UserAccount.objects.get(id=request.data["member2"])
+                UserAccount.objects.get(email=request.data["member2"])
                 if request.data["member2"] != ""
                 else None
             )
@@ -262,7 +262,8 @@ class TeamSubmissionView(generics.GenericAPIView):
 
     def post(self, request):
         team = Team.objects.get(
-            teamname=request.data["teamname"], event=request.data["event"]
+            teamname=request.data["teamname"],
+            event=Event.objects.get(eventname=request.data["event"]),
         )
         if team is None:
             return Response(
