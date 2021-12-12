@@ -80,6 +80,7 @@ class TestView(TestCase):
             "member2": "",
         }
 
+        self.get_all_events_url = reverse("get-all-events")
         self.workshop_url = reverse("workshop")
         self.get_all_notice_url = reverse("get-all-notice")
         self.get_notice_by_id_url1 = reverse("get-notice-by-id", args=[self.id])
@@ -88,6 +89,10 @@ class TestView(TestCase):
         self.teams_by_user_url = reverse("teams-user")
         self.team_url = reverse("team", args=["1"])
         self.team_submission_url = reverse("team-submission")
+
+    def test_get_all_events_view(self):
+        response = self.client.get(self.get_all_events_url)
+        self.assertEqual(response.status_code, 200)
 
     # get data from WorkshopView
     def test_workshop_view_get(self):

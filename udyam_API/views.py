@@ -2,6 +2,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Event, Workshop, Team, NoticeBoard
 from .serializers import (
+    EventSerializer,
     WorkshopSerializer,
     TeamSerializer,
     TeamSubmissionSerializer,
@@ -92,6 +93,11 @@ def checks(request):
             + str(event.members_from_1st_year)
             + " for this event"
         )
+
+
+class GetAllEventsView(generics.ListAPIView):
+    serializer_class = EventSerializer
+    queryset = Event.objects.all()
 
 
 class WorkshopView(generics.ListAPIView):

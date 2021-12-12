@@ -3,6 +3,12 @@ from .models import Workshop, Team, NoticeBoard, Event
 from custom_auth.models import UserAccount
 
 
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = "__all__"
+
+
 class WorkshopSerializer(serializers.ModelSerializer):
     event = serializers.StringRelatedField()
 
