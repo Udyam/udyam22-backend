@@ -13,7 +13,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
     smart_str,
     smart_bytes,
-    DjangoUnicodeDecodeError,
 )
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
@@ -22,6 +21,9 @@ from django.contrib.auth import login, logout
 from django.urls import reverse
 from .utils import Util, part1, part2, part3, part4
 from rest_framework.authtoken.models import Token
+from django.shortcuts import redirect
+from django.http import Http404
+from udyam_backend.settings import BASE_URL_FRONTEND
 
 
 class LoginView(generics.GenericAPIView):
@@ -122,35 +124,13 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             )
 
 
-class PasswordTokenCheckView(generics.GenericAPIView):
-    serializer_class = NewPasswordSerializer
-
-    def get(self, request, uidb64, token):
-        try:
-            id = smart_str(urlsafe_base64_decode(uidb64))
-            user = UserAccount.objects.get(id=id)
-
-            if not PasswordResetTokenGenerator().check_token(user, token):
-                return Response(
-                    {"error": "Invalid token! Try again."},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-
-            return Response(
-                {
-                    "success": True,
-                    "message": "Credentials Valid",
-                    "uidb64": uidb64,
-                    "token": token,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except DjangoUnicodeDecodeError:
-            return Response(
-                {"error": "Invalid token! Try again."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+def PasswordTokenCheck(request, uidb64, token):
+    id = smart_str(urlsafe_base64_decode(uidb64))
+    user = UserAccount.objects.get(id=id)
+    if not PasswordResetTokenGenerator().check_token(user, token):
+        raise Http404
+    url = BASE_URL_FRONTEND + "/resetpage?id=" + str(uidb64) + "?token=" + str(token)
+    return redirect(url)
 
 
 class NewPasswordView(generics.GenericAPIView):
@@ -257,31 +237,17 @@ class RegisterView(generics.GenericAPIView):
             )
 
 
-class ActivateAccountView(generics.GenericAPIView):
-    queryset = UserAccount.objects.all()
-    serializer_class = RegisterSerializer
-
-    def get(self, request, uidb64, token):
-        try:
-            id = smart_str(urlsafe_base64_decode(uidb64))
-            user = UserAccount.objects.get(id=id)
-
-            if not PasswordResetTokenGenerator().check_token(user, token):
-                return Response(
-                    {"error": "Invalid token! Try again."},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-            user.is_active = True
+def ActivateAccount(request, uidb64, token):
+    id = smart_str(urlsafe_base64_decode(uidb64))
+    user = UserAccount.objects.get(id=id)
+    if not PasswordResetTokenGenerator().check_token(user, token):
+        raise Http404
+    url = BASE_URL_FRONTEND + "/login"
+    user.is_active = True
+    user.save()
+    if user.referral_code:
+        user = UserAccount.objects.get(user_referral_code=user.referral_code)
+        if user is not None:
+            user.referral_count += 1
             user.save()
-            if user.referral_code:
-                user = self.queryset.get(user_referral_code=user.referral_code)
-                if user is not None:
-                    user.referral_count += 1
-                    user.save()
-            return Response({"message": "Account verified."}, status=status.HTTP_200_OK)
-
-        except DjangoUnicodeDecodeError:
-            return Response(
-                {"error": "Invalid token! Try again."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+    return redirect(url)

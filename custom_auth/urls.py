@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import (
     RequestPasswordResetEmail,
-    PasswordTokenCheckView,
+    PasswordTokenCheck,
     NewPasswordView,
     RegisterView,
 )
-from .views import ActivateAccountView, LoginView, LogoutView, UserUpdateView
+from .views import ActivateAccount, LoginView, LogoutView, UserUpdateView
 
 """
 TODO:
@@ -20,7 +20,7 @@ urlpatterns = [
     path("update/", UserUpdateView.as_view(), name="update"),
     path(
         "activate/<uidb64>/<token>/",
-        ActivateAccountView.as_view(),
+        ActivateAccount,
         name="activate-account",
     ),
     path(
@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "password_reset/<uidb64>/<token>/",
-        PasswordTokenCheckView.as_view(),
+        PasswordTokenCheck,
         name="password-reset-confirm",
     ),
     path(
