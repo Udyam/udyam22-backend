@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.validators import UniqueValidator
 
-from .models import UserAccount
+from .models import UserAccount, ProfileImages
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -100,6 +100,7 @@ class UserSerializer(serializers.Serializer):
     gender = serializers.CharField(required=True)
     year = serializers.CharField(required=True)
     college_name = serializers.CharField(required=True)
+    profile_image = serializers.ImageField(required=False)
 
     class Meta:
         model = UserAccount
@@ -112,5 +113,7 @@ class UserSerializer(serializers.Serializer):
         user.name = validated_data["name"]
         user.year = validated_data["year"]
         user.college_name = validated_data["college_name"]
+        user.profile_image = validated_data["profile_image"]
+
         user.save()
         return user

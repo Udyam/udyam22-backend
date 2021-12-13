@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models.deletion import CASCADE
 
 
 class AccountManager(BaseUserManager):
@@ -63,3 +64,10 @@ class UserAccount(AbstractBaseUser):
     # Does this user have permission to view this app?
     def has_module_perms(self, app_label):
         return True
+
+
+class ProfileImages(models.Model):
+    user = models.ForeignKey(
+        UserAccount, on_delete=models.CASCADE, null=True, blank=True
+    )
+    image = models.ImageField(default="udyamLogo.png", upload_to="images", blank=True)

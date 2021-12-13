@@ -8,7 +8,7 @@ from .serializers import (
     LoginSerializer,
     UserSerializer,
 )
-from .models import UserAccount
+from .models import UserAccount, ProfileImages
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import (
     smart_str,
@@ -173,15 +173,25 @@ class UserUpdateView(generics.GenericAPIView):
     def get(self, request):
         try:
             user = request.user
+            current_site = get_current_site(request=request).domain
+            try:
+                image = str(ProfileImages.objects.get(user=user).image)
+            except:
+                image = "udyamLogo.png"
             content = {
                 "name": user.name,
                 "email": user.email,
                 "college_name": user.college_name,
                 "year": user.year,
                 "referral_code": user.user_referral_code,
+                "profile_image": "http://"
+                + current_site
+                + "/images/"
+                + image,
             }
             return Response(content, status=status.HTTP_200_OK)
-        except serializers.get_error_detail:
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": "An error occurred!"}, status=status.HTTP_403_FORBIDDEN
             )
@@ -198,6 +208,12 @@ class UserUpdateView(generics.GenericAPIView):
             if "college_name" in request.data:
                 user.update(
                     college_name=request.data["college_name"],
+                )
+            if "profile_image" in request.data:
+                ProfileImages.objects.get(user=user).delete()
+                ProfileImages.objects.create(
+                    user=user,
+                    image=request.data["profile_image"],
                 )
             return Response(
                 {"message": "Updated successfully!"}, status=status.HTTP_200_OK
@@ -218,6 +234,16 @@ class RegisterView(generics.GenericAPIView):
             user = check(request.data)
             if user is None:
                 user = serializer.save()
+                if "profile_image" in request.data:
+                    ProfileImages.objects.create(
+                        user=user,
+                        image=request.data["profile_image"],
+                    )
+                else:
+                    ProfileImages.objects.create(
+                        user=user,
+                        image="udyamLogo.png",
+                    )
                 create_auth_token(user=user)
                 uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
                 token = PasswordResetTokenGenerator().make_token(user)

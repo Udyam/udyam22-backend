@@ -20,6 +20,7 @@ class TestView(TestCase):
         self.test_user1.name = "test_user1_name"
         self.test_user1.year = "2nd year"
         self.test_user1.college_name = "IIT BHU"
+        # self.test_user1.profile_image = "udyamLogo.png"
         self.test_user1.save()
 
         self.credentials_user2 = {
@@ -29,6 +30,7 @@ class TestView(TestCase):
             "year": "2nd year",
             "college_name": "IIT BHU",
             "referral_code": "",
+            #  "profile_image": "udyamLogo.png",
         }
 
         self.auth_token = Token.objects.get_or_create(user=self.test_user1)
@@ -88,6 +90,7 @@ class TestView(TestCase):
                 "year": "2nd year",
                 "college_name": "IIT BHU",
                 "referral_code": "",
+                #  "profile_image": "udyamLogo.png",
             },
         )
         self.assertEqual(response.status_code, 409)
