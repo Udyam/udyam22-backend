@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from udyam_API.views import (
+    GetAllEventsView,
     WorkshopView,
     GetAllNoticeView,
     GetNoticeByIdView,
@@ -12,6 +13,10 @@ from udyam_API.views import (
 
 
 class TestUrls(SimpleTestCase):
+    def test_get_all_evnets_url(self):
+        get_all_events_url = reverse("get-all-events")
+        self.assertEqual(resolve(get_all_events_url).func.view_class, GetAllEventsView)
+
     def test_workshop_url(self):
         workshop_url = reverse("workshop")
         self.assertEqual(resolve(workshop_url).func.view_class, WorkshopView)

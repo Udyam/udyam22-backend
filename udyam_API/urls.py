@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    GetAllEventsView,
     WorkshopView,
     TeamView,
     TeamCreateView,
@@ -11,6 +12,7 @@ from .views import (
 
 
 urlpatterns = [
+    path("events/", GetAllEventsView.as_view(), name="get-all-events"),
     path("workshop/", WorkshopView.as_view(), name="workshop"),
     path("get_all_notice/", GetAllNoticeView.as_view(), name="get-all-notice"),
     path(
