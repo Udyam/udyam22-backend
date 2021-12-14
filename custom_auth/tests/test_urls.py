@@ -5,9 +5,7 @@ from custom_auth.views import (
     LogoutView,
     UserUpdateView,
     RegisterView,
-    ActivateAccountView,
     RequestPasswordResetEmail,
-    PasswordTokenCheckView,
     NewPasswordView,
 )
 
@@ -29,26 +27,10 @@ class TestUrls(SimpleTestCase):
         register_url = reverse("register")
         self.assertEqual(resolve(register_url).func.view_class, RegisterView)
 
-    def test_activate_account_url_is_resolved(self):
-        activate_account_url = reverse(
-            "activate-account", args=["some-uidb64", "some-token"]
-        )
-        self.assertEqual(
-            resolve(activate_account_url).func.view_class, ActivateAccountView
-        )
-
     def test_password_reset_email_url_is_resolved(self):
         password_reset_email_url = reverse("password-reset-email")
         self.assertEqual(
             resolve(password_reset_email_url).func.view_class, RequestPasswordResetEmail
-        )
-
-    def test_password_reset_confirm_url_is_resolved(self):
-        password_reset_confirm_url = reverse(
-            "password-reset-confirm", args=["some-uidb64", "some-token"]
-        )
-        self.assertEqual(
-            resolve(password_reset_confirm_url).func.view_class, PasswordTokenCheckView
         )
 
     def test_password_reset_complete_url_is_resolved(self):
