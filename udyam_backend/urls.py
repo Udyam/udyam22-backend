@@ -23,6 +23,7 @@ urlpatterns = [
     path("auth/", include("custom_auth.urls")),
     path("user/", include("addons.urls")),
     path("API/", include("udyam_API.urls")),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
@@ -47,3 +48,5 @@ if settings.DEBUG:
             "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
         ),
     ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

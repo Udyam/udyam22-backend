@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     "custom_auth",
     "addons",
     "udyam_API",
+    "ckeditor",
+    'ckeditor_uploader',
 ]
+CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
@@ -144,12 +147,15 @@ SWAGGER_SETTINGS = {
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+BASE_URL_FRONTEND = os.environ.get("BASE_URL_FRONTEND")
 
 # heroku config
 
