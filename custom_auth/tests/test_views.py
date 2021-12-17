@@ -53,6 +53,19 @@ class TestView(TestCase):
             "password-reset-confirm", args=["some-uidb64", "some-token"]
         )
 
+    # Valid user login
+    def test_login_view_200(self):
+        self.test_user1.is_active = True
+        self.test_user1.save()
+        response = self.client.post(
+            self.login_url,
+            {
+                "email": "test_user1@example.com",
+                "password": "test_password1"
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
     # Invalid user login
     def test_login_view_401(self):
         response = self.client.post(
@@ -91,48 +104,6 @@ class TestView(TestCase):
             },
         )
         self.assertEqual(response.status_code, 409)
-
-    # Valid arguments (uidb64, token)
-    def test_activate_account_view_GET_200(self):
-        response = self.client.get(self.activate_account_url1)
-        self.assertEqual(response.status_code, 200)
-
-    # Invalid arguments (uidb64, token)
-    def test_activate_account_view_GET_401(self):
-        response = self.client.get(self.activate_account_url2)
-        self.assertEqual(response.status_code, 401)
-
-    # Password reset: email is valid and user is active
-    def test_password_reset_email_view_POST_200(self):
-        self.client.get(self.activate_account_url1)
-        response = self.client.post(
-            self.password_reset_email_url, {"email": "test_user1@example.com"}
-        )
-        self.assertEqual(response.status_code, 200)
-
-    # Password reset: email is valid and user is not active
-    def test_password_reset_email_view_POST_401(self):
-        response = self.client.post(
-            self.password_reset_email_url, {"email": "test_user1@example.com"}
-        )
-        self.assertEqual(response.status_code, 401)
-
-    # Password reset: email is invalid
-    def test_password_reset_email_view_POST_400(self):
-        response = self.client.post(
-            self.password_reset_email_url, {"email": "test_us@example.com"}
-        )
-        self.assertEqual(response.status_code, 400)
-
-    # Valid arguments (uidb64, token)
-    def test_password_token_check_view_GET_200(self):
-        response = self.client.get(self.password_reset_confirm_url1)
-        self.assertEqual(response.status_code, 200)
-
-    # invalid arguments (uidb64, token)
-    def test_password_token_check_view_GET_401(self):
-        response = self.client.get(self.password_reset_confirm_url2)
-        self.assertEqual(response.status_code, 401)
 
     # Valid arguments (uidb64, token)
     def test_new_password_successfully_set(self):
