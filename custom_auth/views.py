@@ -129,7 +129,7 @@ def PasswordTokenCheck(request, uidb64, token):
     user = UserAccount.objects.get(id=id)
     if not PasswordResetTokenGenerator().check_token(user, token):
         raise Http404
-    url = BASE_URL_FRONTEND + "/resetpage?id=" + str(uidb64) + "?token=" + str(token)
+    url = BASE_URL_FRONTEND + "/resetpage?id=" + str(uidb64) + "&token=" + str(token)
     return redirect(url)
 
 

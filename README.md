@@ -19,7 +19,8 @@ windows: `./venv/Scripts/activate`
 `pip install -r requirements/dev.txt`
 
 3. apply migrations: `python manage.py migrate`
-4. Start the development server using `python manage.py runserver`
+4. Collect static files : `python manage.py collectstatic`
+5. Start the development server using `python manage.py runserver`
 
 For Uptading work after some PRs are merged :
 1. Commit your changes (if any)
