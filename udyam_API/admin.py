@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 import threading
 from django.conf import settings
 from django.http import HttpResponse
-from django.core.mail import (send_mail, BadHeaderError, EmailMessage)
+from django.core.mail import (BadHeaderError, EmailMessage)
 from custom_auth.models import UserAccount
 
 admin.site.register(Event)
@@ -36,7 +36,7 @@ class BroadCast_Email_Admin(admin.ModelAdmin):
         list_email_user = [p.email for p in UserAccount.objects.all()]  #: if p.email != settings.EMAIL_HOST_USER   #this for exception
         obj_selected = obj[0]
         EmailThread(obj_selected.subject, mark_safe(obj_selected.message), list_email_user).start()
-    submit_email.short_description = 'Submit BroadCast (1 Select Only)'
+    submit_email.short_description = 'Submit BroadCast (Select 1 Only)'
     submit_email.allow_tags = True
 
     actions = ['submit_email']
