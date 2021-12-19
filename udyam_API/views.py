@@ -144,7 +144,6 @@ class TeamCreateView(generics.GenericAPIView):
             "member1": team.member1.email if team.member1 else None,
             "member2": team.member2.email if team.member2 else None,
         }
-        
         email_body = (
             part1
             + team.teamname
