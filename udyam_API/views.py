@@ -106,6 +106,7 @@ class WorkshopView(generics.ListAPIView):
     serializer_class = WorkshopSerializer
     queryset = Workshop.objects.all().order_by("-date")
 
+
 class GetAllNoticeView(generics.ListAPIView):
     serializer_class = NoticeBoardSerializer
     queryset = NoticeBoard.objects.all().order_by("-date")
@@ -145,14 +146,14 @@ class TeamCreateView(generics.GenericAPIView):
         }
         email_body = (
             part1
-            + "team" 
+            + "team"
             + team.teamname
             + part2
             + "You are successfully registered for the "
             + team.event.eventname
-            + "\nPlease connect with us server via below link:"
+            + "\nPlease join the Discord server via below link:"
             + part3
-            + "google.com"
+            + "https://discord.gg/gNrEW8vp4G"
             + part4
         )
         data = {

@@ -246,7 +246,7 @@ def ActivateAccount(request, uidb64, token):
     user = UserAccount.objects.get(id=id)
     if not PasswordResetTokenGenerator().check_token(user, token):
         raise Http404
-    url = BASE_URL_FRONTEND + "/login"
+    url = BASE_URL_FRONTEND + "/loginregister"
     user.is_active = True
     user.save()
     if user.referral_code:
