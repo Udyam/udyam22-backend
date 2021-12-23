@@ -100,24 +100,29 @@ part1 = """<html lang="en">
             <img src="https://drive.google.com/uc?export=view&id=1DYlInZ1znxgoXFTVUv6LEv5_aLiZKapV" alt="UDYAM">
         </div>
         <div id="content">
-            <p>
+            <p><b>
                 Hi """
 
-part2 = """!<br>"""
+part2 = """!</b><br>"""
 part3 = """</p>
             <div>
                 <a id="btn" href='"""
-part4 = (
-    """'>Verify Email</a>
+part4 = """'>"""
+part5 = (
+    """</a>
             </div>
             <p>Team Udyam</p>
         </div>
         <div id="footer">
             <div id="links">
-                <a href="#"><img src="https://drive.google.com/uc?export=view&id=12Z3SLCKNdQoAE_tyCGc_8S-nbTOlOfI4" alt="in"></a>
-                <a href="#"><img src="https://drive.google.com/uc?export=view&id=1gwFFHb_mTjvB0WskGmI8FBgTTXU9CmFJ" alt="fs"></a>
-                <a href="#"><img src="https://drive.google.com/uc?export=view&id=1DSlF0DhfuXyYQj1mpywXHvEUaJf_gUE9" alt="insta"></a>
-                <a href="#"><img src="https://drive.google.com/uc?export=view&id=1yK5Ec5vi59keE6SSTbxSwj1s-kxmr0fb" alt="utube"></a>
+                <a href="https://www.linkedin.com/company/udyam">
+                <img src="https://drive.google.com/uc?export=view&id=12Z3SLCKNdQoAE_tyCGc_8S-nbTOlOfI4" alt="in"></a>
+                <a href="https://www.facebook.com/udyamfest/">
+                <img src="https://drive.google.com/uc?export=view&id=1gwFFHb_mTjvB0WskGmI8FBgTTXU9CmFJ" alt="fs"></a>
+                <a href="https://instagram.com/udyam_iit_bhu?utm_medium=copy_link">
+                <img src="https://drive.google.com/uc?export=view&id=1DSlF0DhfuXyYQj1mpywXHvEUaJf_gUE9" alt="insta"></a>
+                <a href=" https://youtube.com/channel/UC8wlztNbDIu38rfQ1HChSIg">
+                <img src="https://drive.google.com/uc?export=view&id=1yK5Ec5vi59keE6SSTbxSwj1s-kxmr0fb" alt="utube"></a>
             </div>
             <p>
                 &copy; 2022 Udyam All rights reserved.
@@ -136,7 +141,7 @@ class Util:
     @staticmethod
     def send_email(data):
         email = EmailMessage(
-            subject=data["email_subject"], body=data["email_body"], to=[data["to_mail"]]
+            subject=data["email_subject"], body=data["email_body"], to=data["to_mail"]
         )
         email.content_subtype = "html"
         email.send()

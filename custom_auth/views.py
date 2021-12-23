@@ -19,7 +19,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.urls import reverse
-from .utils import Util, part1, part2, part3, part4
+from .utils import Util, part1, part2, part3, part4, part5
 from rest_framework.authtoken.models import Token
 from django.shortcuts import redirect
 from django.http import Http404
@@ -102,16 +102,17 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
                 part1
                 + user.name
                 + part2
-                + """You have applied for password reset, so before we get started, we just need to confirm that
-                this is you.\n
-                Click below link to verify your email address."""
+                + """We have received a request to reset the password of your Udyam account.\n
+                Click the link below to proceed further:"""
                 + part3
                 + absurl
                 + part4
+                + "Reset"
+                + part5
             )
             data = {
                 "email_body": email_body,
-                "to_mail": user.email,
+                "to_mail": [user.email],
                 "email_subject": "Reset Your Udyam Password",
             }
             Util.send_email(data)
@@ -212,16 +213,17 @@ class RegisterView(generics.GenericAPIView):
                     part1
                     + user.name
                     + part2
-                    + """Thanks for registering for an account on Udyam, before we get started, we just need to confirm that
-                    this is you.\n
-                    Click below link to verify your email address."""
+                    + """Thanks for registering on Udyam. To complete your udyam sign up, we just need to verify your email address.\n
+                    Click the link below to verify:"""
                     + part3
                     + absurl
                     + part4
+                    + "Verify Email"
+                    + part5
                 )
                 data = {
                     "email_body": email_body,
-                    "to_mail": user.email,
+                    "to_mail": [user.email],
                     "email_subject": "Activate Your Udyam Password",
                 }
                 Util.send_email(data)
