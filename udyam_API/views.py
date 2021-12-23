@@ -9,7 +9,7 @@ from .serializers import (
     NoticeBoardSerializer,
 )
 from custom_auth.models import UserAccount
-from .utils import Util, part1, part2, part3, part4
+from custom_auth.utils import Util, part1, part2, part3, part4, part5
 
 
 def checks(request):
@@ -146,14 +146,17 @@ class TeamCreateView(generics.GenericAPIView):
         }
         email_body = (
             part1
+            + "team "
             + team.teamname
             + part2
-            + "You are successfully registered for the "
+            + "You are successfully registered for the event "
             + team.event.eventname
-            + "<br>Please join the Discord server via below link:"
+            + ". Please join the Discord server via below link:"
             + part3
             + "https://discord.gg/gNrEW8vp4G"
             + part4
+            + "Discord link"
+            + part5
         )
         data = {
             "email_body": email_body,
