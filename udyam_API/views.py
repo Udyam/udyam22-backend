@@ -9,6 +9,7 @@ from .serializers import (
     NoticeBoardSerializer,
 )
 from custom_auth.models import UserAccount
+from .utils import Util, part1, part2, part3, part4
 
 
 def checks(request):
@@ -143,6 +144,28 @@ class TeamCreateView(generics.GenericAPIView):
             "member1": team.member1.email if team.member1 else None,
             "member2": team.member2.email if team.member2 else None,
         }
+        email_body = (
+            part1
+            + team.teamname
+            + part2
+            + "You are successfully registered for the "
+            + team.event.eventname
+            + "<br>Please join the Discord server via below link:"
+            + part3
+            + "https://discord.gg/gNrEW8vp4G"
+            + part4
+        )
+        data = {
+            "email_body": email_body,
+            "to_mail": [team.leader.email],
+            "email_subject": "Link to join Discord server",
+        }
+        if team.member1:
+            data["to_mail"].append(team.member1.email)
+        if team.member2:
+            data["to_mail"].append(team.member2.email)
+
+        Util.send_email(data)
         return Response(team_info, status=status.HTTP_200_OK)
 
 

@@ -102,7 +102,9 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
                 part1
                 + user.name
                 + part2
-                + ",\nUse this link to reset your password: \n"
+                + """You have applied for password reset, so before we get started, we just need to confirm that
+                this is you.\n
+                Click below link to verify your email address."""
                 + part3
                 + absurl
                 + part4
@@ -210,7 +212,9 @@ class RegisterView(generics.GenericAPIView):
                     part1
                     + user.name
                     + part2
-                    + ",\nUse this link to activate your account: \n"
+                    + """Thanks for registering for an account on Udyam, before we get started, we just need to confirm that
+                    this is you.\n
+                    Click below link to verify your email address."""
                     + part3
                     + absurl
                     + part4
@@ -242,7 +246,7 @@ def ActivateAccount(request, uidb64, token):
     user = UserAccount.objects.get(id=id)
     if not PasswordResetTokenGenerator().check_token(user, token):
         raise Http404
-    url = BASE_URL_FRONTEND + "/login"
+    url = BASE_URL_FRONTEND + "/loginregister"
     user.is_active = True
     user.save()
     if user.referral_code:

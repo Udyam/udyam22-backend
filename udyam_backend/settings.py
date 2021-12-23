@@ -48,9 +48,9 @@ INSTALLED_APPS = [
     "addons",
     "udyam_API",
     "ckeditor",
-    'ckeditor_uploader',
+    "ckeditor_uploader",
 ]
-CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
@@ -147,7 +147,7 @@ SWAGGER_SETTINGS = {
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 EMAIL_USE_TLS = True
