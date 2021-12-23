@@ -146,12 +146,11 @@ class TeamCreateView(generics.GenericAPIView):
         }
         email_body = (
             part1
-            + "team"
             + team.teamname
             + part2
             + "You are successfully registered for the "
             + team.event.eventname
-            + "\nPlease join the Discord server via below link:"
+            + "<br>Please join the Discord server via below link:"
             + part3
             + "https://discord.gg/gNrEW8vp4G"
             + part4
