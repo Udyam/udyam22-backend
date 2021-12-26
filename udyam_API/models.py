@@ -29,7 +29,7 @@ class NoticeBoard(models.Model):
     description = models.TextField(blank=False, null=False)
     date = models.DateField(auto_now=True)
 
-    def str(self):
+    def __str__(self):
         return f"{self.title}"
 
 
