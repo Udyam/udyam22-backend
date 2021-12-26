@@ -97,7 +97,6 @@ class RegisterSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.Serializer):
     name = serializers.CharField(required=True)
-    gender = serializers.CharField(required=True)
     year = serializers.CharField(required=True)
     college_name = serializers.CharField(required=True)
 
