@@ -224,7 +224,7 @@ class RegisterView(generics.GenericAPIView):
                 data = {
                     "email_body": email_body,
                     "to_mail": [user.email],
-                    "email_subject": "Activate Your Udyam Password",
+                    "email_subject": "Activate Your Udyam Account",
                 }
                 Util.send_email(data)
                 return Response(
