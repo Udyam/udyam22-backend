@@ -199,6 +199,12 @@ class RegisterView(generics.GenericAPIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = check(request.data)
+            try:
+                UserAccount.objects.get(user_referral_code=request.data["referral_code"])
+            except:
+                return Response(
+                    {"error": "Invalid referral code"}, status=status.HTTP_404_NOT_FOUND
+                )
             if user is None:
                 user = serializer.save()
                 create_auth_token(user=user)
