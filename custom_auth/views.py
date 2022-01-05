@@ -213,7 +213,8 @@ class RegisterView(generics.GenericAPIView):
                     part1
                     + user.name
                     + part2
-                    + """Thanks for registering on Udyam. To complete your udyam sign up, we just need to verify your email address.\n
+                    + """Thanks for registering on Udyam. Here is the discord link of udyam: https://discord.gg/gNrEW8vp4G <br>
+                    To complete your udyam sign up, we just need to verify your email address.<br>
                     Click the link below to verify:"""
                     + part3
                     + absurl
