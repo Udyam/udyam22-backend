@@ -71,13 +71,13 @@ def checks(request):
         event_teams.filter(leader=member1).count()
         or event_teams.filter(member1=member1).count()
         or event_teams.filter(member2=member1).count()
-    ):
+    ) and member1 is not None:
         return "Member 1 already has a team in this event"
     elif (
         event_teams.filter(leader=member2).count()
         or event_teams.filter(member1=member2).count()
         or event_teams.filter(member2=member2).count()
-    ):
+    ) and member2 is not None:
         return "Member 2 already has a team in this event"
     elif (
         second_yearites != 0
