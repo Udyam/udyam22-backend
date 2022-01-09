@@ -301,13 +301,9 @@ class TeamSubmissionView(generics.GenericAPIView):
             return Response(
                 {"error": "Team not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        if (
-            team.leader != request.user
-            and team.member1 != request.user
-            and team.member2 != request.user
-        ):
+        if team.leader != request.user:
             return Response(
-                {"error": "Only the team member is allowed to submit."},
+                {"error": "Only the team leader is allowed to submit."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         team.submission = request.data["submission"]
