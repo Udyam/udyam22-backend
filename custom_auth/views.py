@@ -42,12 +42,23 @@ class LoginView(generics.GenericAPIView):
                 {"error": "Please provide both email and password"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        user = authenticate(username=email, password=password)
-        if not user or user.is_active == False:
+        elif len(UserAccount.objects.filter(email=email)) == 0:
             return Response(
-                {"error": "User not authorized!"}, status=status.HTTP_401_UNAUTHORIZED
+                {"error": "Please verify your email first and then login"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+        user = authenticate(username=email, password=password)
+        if not user:
+            return Response(
+                {"error": "Please check your credentials...cannot login!"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        elif user.is_active is False:
+            return Response(
+                {"error": "Your account is inactive!"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         login(request, user)
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"token": token.key})
@@ -250,9 +261,10 @@ def ActivateAccount(request, uidb64, token):
     if not PasswordResetTokenGenerator().check_token(user, token):
         raise Http404
     url = BASE_URL_FRONTEND + "/loginregister"
+    was_active = user.is_active
     user.is_active = True
     user.save()
-    if user.referral_code:
+    if user.referral_code and was_active is False:
         user = UserAccount.objects.get(user_referral_code=user.referral_code)
         if user is not None:
             user.referral_count += 1
