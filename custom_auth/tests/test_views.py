@@ -18,7 +18,7 @@ class TestView(TestCase):
         }
         self.test_user1 = UserAccount.objects.create_user(**self.credentials_user1)
         self.test_user1.name = "test_user1_name"
-        self.test_user1.year = "2nd year"
+        self.test_user1.year = "TWO"
         self.test_user1.college_name = "IIT BHU"
         self.test_user1.save()
 
@@ -26,7 +26,7 @@ class TestView(TestCase):
             "email": "test_user2@example.com",
             "password": "test_password2",
             "name": "test_user2_name",
-            "year": "2nd year",
+            "year": "TWO",
             "college_name": "IIT BHU",
             "referral_code": "",
         }
@@ -59,10 +59,7 @@ class TestView(TestCase):
         self.test_user1.save()
         response = self.client.post(
             self.login_url,
-            {
-                "email": "test_user1@example.com",
-                "password": "test_password1"
-            },
+            {"email": "test_user1@example.com", "password": "test_password1"},
         )
         self.assertEqual(response.status_code, 200)
 
