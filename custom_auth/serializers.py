@@ -5,7 +5,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.validators import UniqueValidator
 
 from .models import UserAccount
@@ -62,6 +62,20 @@ class TokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=500)
 
 
+def checkYears(value):
+    valid_set = ["ONE", "TWO", "THREE", "FOUR"]
+    if value in valid_set:
+        return True
+    raise ValidationError("Please enter a valid year.")
+
+
+def checkCode(value):
+    user = UserAccount.objects.filter(user_referral_code=value)
+    if len(user) == 0:
+        raise ValidationError("Please enter a valid referral code.")
+    return True
+
+
 class RegisterSerializer(serializers.Serializer):
     # TODO: Implement register functionality
     email = serializers.EmailField(
@@ -69,10 +83,10 @@ class RegisterSerializer(serializers.Serializer):
     )
     password = serializers.CharField(write_only=True, required=True)
     name = serializers.CharField(required=True)
-    year = serializers.CharField(required=True)
+    year = serializers.CharField(required=True, validators=[checkYears])
     college_name = serializers.CharField(required=True)
     referral_code = serializers.CharField(
-        required=False, allow_blank=True, allow_null=True
+        required=False, allow_blank=True, allow_null=True, validators=[checkCode]
     )
 
     class Meta:
