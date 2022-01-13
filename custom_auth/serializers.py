@@ -79,7 +79,13 @@ def checkCode(value):
 class RegisterSerializer(serializers.Serializer):
     # TODO: Implement register functionality
     email = serializers.EmailField(
-        required=True, validators=[UniqueValidator(queryset=UserAccount.objects.all())]
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=UserAccount.objects.all(),
+                message=("Email is already registered with us. Please login!"),
+            )
+        ],
     )
     password = serializers.CharField(write_only=True, required=True)
     name = serializers.CharField(required=True)

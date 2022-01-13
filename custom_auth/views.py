@@ -44,7 +44,7 @@ class LoginView(generics.GenericAPIView):
             )
         elif len(UserAccount.objects.filter(email=email)) == 0:
             return Response(
-                {"error": "Please verify your email first and then login"},
+                {"error": "Your email is not registered with us."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = authenticate(username=email, password=password)
@@ -55,7 +55,7 @@ class LoginView(generics.GenericAPIView):
             )
         elif user.is_active is False:
             return Response(
-                {"error": "Your account is inactive!"},
+                {"error": "Please verify your email first and then login."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -250,9 +250,10 @@ class RegisterView(generics.GenericAPIView):
                 )
         else:
             # print(serializer.errors)
-            return Response(
-                {"error": serializer.errors}, status=status.HTTP_409_CONFLICT
-            )
+            error = {}
+            for err in serializer.errors:
+                error[err] = serializer.errors[err][0]
+            return Response(error, status=status.HTTP_409_CONFLICT)
 
 
 def ActivateAccount(request, uidb64, token):
