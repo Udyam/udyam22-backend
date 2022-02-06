@@ -98,7 +98,7 @@ def broadcast_mail(request, subject):
             list_email_user[i: i + n] for i in range(0, len(list_email_user), n)
         ]
         for group in list_group:
-            email = EmailMessage(subject, message, to=group)
+            email = EmailMessage(subject, message, bcc=group)
             email.content_subtype = "html"
             email.send()
         return HttpResponse("Mail sent successfully")
