@@ -87,12 +87,6 @@ def broadcast_mail(request, subject):
         message = BroadCast_Email.objects.get(subject=subject).message
         users = UserAccount.objects.all()
         list_email_user = [user.email for user in users]
-        list_email_user = []
-        for i in range(700):
-            list_email_user.append("testingmail" + str(i) + "@gmail.com")
-            if i % 94 == 0:
-                list_email_user.append("ankuragrawal9455@gmail.com")
-                list_email_user.append("jainism987e@gmail.com")
         n = 95
         list_group = [
             list_email_user[i: i + n] for i in range(0, len(list_email_user), n)
