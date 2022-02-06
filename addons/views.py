@@ -6,6 +6,8 @@ from custom_auth.models import UserAccount
 from rest_framework.views import APIView
 from django.http import HttpResponse
 from django.http import Http404
+from django.core.mail import EmailMessage
+from udyam_API.models import BroadCast_Email
 
 
 # Create your views here.
@@ -76,3 +78,28 @@ def export_users_xls(request):
 
     wb.save(response)
     return response
+
+
+def broadcast_mail(request, subject):
+    if request.user.is_authenticated is False or request.user.is_admin is False:
+        raise Http404
+    if request.method == "GET":
+        message = BroadCast_Email.objects.get(subject=subject).message
+        users = UserAccount.objects.all()
+        list_email_user = [user.email for user in users]
+        list_email_user = []
+        for i in range(700):
+            list_email_user.append("testingmail" + str(i) + "@gmail.com")
+            if i % 94 == 0:
+                list_email_user.append("ankuragrawal9455@gmail.com")
+                list_email_user.append("jainism987e@gmail.com")
+        n = 95
+        list_group = [
+            list_email_user[i: i + n] for i in range(0, len(list_email_user), n)
+        ]
+        for group in list_group:
+            email = EmailMessage(subject, message, to=group)
+            email.content_subtype = "html"
+            email.send()
+        return HttpResponse("Mail sent successfully")
+    return HttpResponse("Invalid request")
