@@ -95,7 +95,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
         email = request.data["email"]
 
-        if UserAccount.objects.filter(email=email).exists():
+        if len(UserAccount.objects.filter(email=email)) != 0:
             user = UserAccount.objects.get(email=email)
             if not user.is_active:
                 return Response(
