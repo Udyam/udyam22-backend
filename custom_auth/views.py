@@ -55,7 +55,7 @@ class LoginView(generics.GenericAPIView):
             )
         elif user.is_active is False:
             return Response(
-                {"error": "Please verify your email first and then login."},
+                {"error": "You have not activated your account after registration. Please check your mail."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
