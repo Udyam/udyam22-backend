@@ -47,15 +47,18 @@ class LoginView(generics.GenericAPIView):
                 {"error": "Your email is not registered with us."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        user1 = UserAccount.objects.get(email=email)
+        if user1.is_active is False:
+            return Response(
+                {"error": "You have not activated your account after registration. Please check your mail."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         user = authenticate(username=email, password=password)
         if not user:
             return Response(
                 {"error": "Please check your credentials...cannot login!"},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-        elif user.is_active is False:
-            return Response(
-                {"error": "You have not activated your account after registration. Please check your mail."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
