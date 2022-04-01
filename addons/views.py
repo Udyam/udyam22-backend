@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from django.http import Http404
 from django.core.mail import EmailMessage
-from udyam_API.models import BroadCast_Email
+from udyam_API.models import BroadCast_Email, Team
 
 
 # Create your views here.
@@ -71,6 +71,42 @@ def export_users_xls(request):
     rows = UserAccount.objects.all().values_list(
         "name", "email", "year", "college_name", "user_referral_code", "referral_count"
     )
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+
+def export_teams_xls(request):
+    if request.user.is_authenticated is False or request.user.is_admin is False:
+        raise Http404
+    response = HttpResponse(content_type="application/ms-excel")
+    response["Content-Disposition"] = 'attachment; filename="Submissions.xls"'
+
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("Submissions")
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ["Team Event", "Team Name", "Leader", "Submission Link"]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows=[]
+    for team in Team.objects.exclude(submission__isnull=True).order_by('-event'):
+        rows.append([team.event.eventname, team.teamname, team.leader.name, team.submission])
+    
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
