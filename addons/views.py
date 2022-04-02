@@ -103,10 +103,12 @@ def export_teams_xls(request):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
-    rows=[]
-    for team in Team.objects.exclude(submission__isnull=True).order_by('-event'):
-        rows.append([team.event.eventname, team.teamname, team.leader.name, team.submission])
-    
+    rows = []
+    for team in Team.objects.exclude(submission__isnull=True).order_by("-event"):
+        rows.append(
+            [team.event.eventname, team.teamname, team.leader.name, team.submission]
+        )
+
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
