@@ -312,8 +312,10 @@ class TeamSubmissionView(generics.GenericAPIView):
             {"message": "Submitted successfully"}, status=status.HTTP_200_OK
         )
 
+
 class TeamCountView(generics.GenericAPIView):
     serializer_class = TeamSubmissionSerializer
+
     def get(self, request):
         res = {}
         for event in Event.objects.all():
