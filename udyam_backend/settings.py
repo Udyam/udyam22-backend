@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "=*9%^j+b)f2pwq6^2lnxmjvfbq)ch3^e+fwsvfu_0%rc)()j_e"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get("DEBUG", "1"))
+DEBUG = False
 
-if not DEBUG:
-    SECRET_KEY = os.environ.get("SECRET_KEY")
+# if not DEBUG:
+#     SECRET_KEY = os.environ.get("SECRET_KEY")
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
