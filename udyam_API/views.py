@@ -342,20 +342,77 @@ def createCerti(email):
     for index, j in df.iterrows():
         if j["Email"] == email:
             img = Image.open("static/template/{}.png".format(j["Certificate"]))
+            name_coord = {
+                "Appreciation": (),
+                "EES_Appreciation_Cult": (),
+                "EES_Appreciation_Sports": (),
+                "EES_Merit": (),
+                "EES_participation": (),
+                "Merit": (),
+                "Participation": (750,380),
+            }
             draw = ImageDraw.Draw(img)
             draw.text(
-                xy=(750, 380),
+                xy=name_coord.get(j["Certificate"]),
                 text="{}".format(j["Name"]),
                 fill=(0, 0, 0),
                 font=userfont,
             )
-            draw.text(
+            if j["Certificate"] == "Appreciation":
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Designation"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            if j["Certificate"] == "EES_Appreciation_Cult" or j["Certificate"] == "EES_Appreciation_Sports" :
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Designation"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            if j["Certificate"] == "EES_Merit":
+                draw.text(
                 xy=(647, 430),
                 text="{}".format(j["Event"]),
                 fill=(0, 0, 0),
                 font=userfont,
-            )
-            img.save("static/certificates/{}.jpeg".format(j["Name"]))
+                )
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Position"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            if j["Certificate"] == "EES_participation":
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Event"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            if j["Certificate"] == "Merit":
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Event"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Position"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            if j["Certificate"] == "Participation":
+                draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Event"]),
+                fill=(0, 0, 0),
+                font=userfont,
+                )
+            img.save("static/certificates/{}.png".format(j["Name"]))
 
     shutil.make_archive("static/certificates", "zip", "static/certificates")
     zip_file = open("static/certificates.zip", "rb")
@@ -363,6 +420,7 @@ def createCerti(email):
 
 
 class CertificateGetUserView(generics.GenericAPIView):
+    # permission_classes = (permissions.IsAuthenticated,)
     serializer_class = TeamSubmissionSerializer
 
     def get(self, request):
