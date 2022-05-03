@@ -10,6 +10,17 @@ from .serializers import (
 )
 from custom_auth.models import UserAccount
 from custom_auth.utils import Util, part1, part2, part3, part4, part5
+from django.http import FileResponse
+from rest_framework import viewsets, renderers
+from rest_framework.decorators import action
+from django.core.files import File
+from django.http import HttpResponse
+from PIL import Image, ImageDraw, ImageFont, ImageFile
+from io import BytesIO
+import pandas as pd
+import os
+from wsgiref.util import FileWrapper
+import shutil
 
 
 def checks(request):
@@ -321,6 +332,45 @@ class TeamCountView(generics.GenericAPIView):
         for event in Event.objects.all():
             teams = Team.objects.filter(event=event)
             res[event.eventname] = teams.count()
-        return Response(
-            res, status=status.HTTP_200_OK
+        return Response(res, status=status.HTTP_200_OK)
+
+
+def createCerti(email):
+    df = pd.read_csv("static/results.csv")
+    userfont = ImageFont.truetype("static/ArianaVioleta.ttf", 45)
+    os.makedirs("static/certificates")
+    for index, j in df.iterrows():
+        if j["Email"] == email:
+            img = Image.open("static/template/{}.png".format(j["Certificate"]))
+            draw = ImageDraw.Draw(img)
+            draw.text(
+                xy=(750, 380),
+                text="{}".format(j["Name"]),
+                fill=(0, 0, 0),
+                font=userfont,
+            )
+            draw.text(
+                xy=(647, 430),
+                text="{}".format(j["Event"]),
+                fill=(0, 0, 0),
+                font=userfont,
+            )
+            img.save("static/certificates/{}.jpeg".format(j["Name"]))
+
+    shutil.make_archive("static/certificates", "zip", "static/certificates")
+    zip_file = open("static/certificates.zip", "rb")
+    return zip_file
+
+
+class CertificateGetUserView(generics.GenericAPIView):
+    serializer_class = TeamSubmissionSerializer
+
+    def get(self, request):
+        zip_file = createCerti("person1@itbhu.ac.in")
+        response = HttpResponse(FileWrapper(zip_file), content_type="application/zip")
+        response["Content-Disposition"] = (
+            'attachment; filename="%s"' % "certificates.zip"
         )
+        os.remove("static/certificates.zip")
+        shutil.rmtree("static/certificates")
+        return response

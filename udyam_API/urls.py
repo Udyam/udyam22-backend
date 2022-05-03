@@ -9,6 +9,7 @@ from .views import (
     GetAllNoticeView,
     GetNoticeByIdView,
     TeamCountView,
+    CertificateGetUserView,
 )
 
 
@@ -26,4 +27,7 @@ urlpatterns = [
     path("team/<int:id>/", TeamView.as_view(), name="team"),
     path("team/submission/", TeamSubmissionView.as_view(), name="team-submission"),
     path("team/count/", TeamCountView.as_view(), name="team-count"),
+    path(
+        "certificates/user", CertificateGetUserView.as_view(), name="certificates-user"
+    ),
 ]
