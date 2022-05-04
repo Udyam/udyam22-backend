@@ -338,81 +338,96 @@ class TeamCountView(generics.GenericAPIView):
 def createCerti(email):
     df = pd.read_csv("static/results.csv")
     userfont = ImageFont.truetype("static/ArianaVioleta.ttf", 45)
+    userfont1 = ImageFont.truetype("static/ArianaVioleta.ttf", 70)
     os.makedirs("static/certificates")
     for index, j in df.iterrows():
         if j["Email"] == email:
             img = Image.open("static/template/{}.png".format(j["Certificate"]))
             name_coord = {
-                "Appreciation": (),
-                "EES_Appreciation_Cult": (),
-                "EES_Appreciation_Sports": (),
-                "EES_Merit": (),
-                "EES_participation": (),
-                "Merit": (),
-                "Participation": (750,380),
+                "Appreciation": (750, 386),
+                "EES_Appreciation_Cult": (1180, 520),
+                "EES_Appreciation_Sports": (1180, 520),
+                "EES_Merit": (1190, 530),
+                "EES_participation": (1190, 565),
+                "Merit": (757, 386),
+                "Participation": (760, 383),
             }
             draw = ImageDraw.Draw(img)
             draw.text(
                 xy=name_coord.get(j["Certificate"]),
                 text="{}".format(j["Name"]),
                 fill=(0, 0, 0),
-                font=userfont,
+                font=userfont
+                if j["Certificate"] == "Appreciation"
+                or j["Certificate"] == "Merit"
+                or j["Certificate"] == "Participation"
+                else userfont1,
             )
             if j["Certificate"] == "Appreciation":
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Designation"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(647, 550),
+                    text="{}".format(j["Designation"]),
+                    fill=(0, 0, 0),
+                    font=userfont,
                 )
-            if j["Certificate"] == "EES_Appreciation_Cult" or j["Certificate"] == "EES_Appreciation_Sports" :
+            if (
+                j["Certificate"] == "EES_Appreciation_Cult"
+                or j["Certificate"] == "EES_Appreciation_Sports"
+            ):
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Designation"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(1100, 820),
+                    text="{}".format(j["Designation"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
                 )
             if j["Certificate"] == "EES_Merit":
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Event"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(1030, 610),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
                 )
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Position"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(950, 840),
+                    text="{}".format(j["Position"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
                 )
             if j["Certificate"] == "EES_participation":
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Event"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(950, 645),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
                 )
             if j["Certificate"] == "Merit":
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Event"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(547, 432),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont,
                 )
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Position"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(647, 522),
+                    text="{}".format(j["Position"]),
+                    fill=(0, 0, 0),
+                    font=userfont,
                 )
             if j["Certificate"] == "Participation":
                 draw.text(
-                xy=(647, 430),
-                text="{}".format(j["Event"]),
-                fill=(0, 0, 0),
-                font=userfont,
+                    xy=(647, 430),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont,
                 )
-            img.save("static/certificates/{}.png".format(j["Name"]))
+            if (
+                j["Certificate"] == "Appreciation"
+                or j["Certificate"] == "EES_Appreciation_Cult"
+                or j["Certificate"] == "EES_Appreciation_Sports"
+            ):
+                img.save("static/certificates/{}.png".format(j["Designation"]))
+            else:
+                img.save("static/certificates/{}.png".format(j["Event"]))
 
     shutil.make_archive("static/certificates", "zip", "static/certificates")
     zip_file = open("static/certificates.zip", "rb")
@@ -420,11 +435,10 @@ def createCerti(email):
 
 
 class CertificateGetUserView(generics.GenericAPIView):
-    # permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = TeamSubmissionSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        zip_file = createCerti("person1@itbhu.ac.in")
+        zip_file = createCerti(request.user.email)
         response = HttpResponse(FileWrapper(zip_file), content_type="application/zip")
         response["Content-Disposition"] = (
             'attachment; filename="%s"' % "certificates.zip"
