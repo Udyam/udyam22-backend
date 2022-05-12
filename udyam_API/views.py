@@ -337,70 +337,109 @@ class TeamCountView(generics.GenericAPIView):
 
 def createCerti(email):
     df = pd.read_csv("static/results.csv")
-    userfont = ImageFont.truetype("static/ArianaVioleta.ttf", 45)
-    userfont1 = ImageFont.truetype("static/ArianaVioleta.ttf", 70)
+    userfont0 = ImageFont.truetype("static/Aller_Rg.ttf", 15)
+    userfont = ImageFont.truetype("static/Aller_Rg.ttf", 33)
+    userfont1 = ImageFont.truetype("static/Aller_Rg.ttf", 44)
     os.makedirs("static/certificates")
     for index, j in df.iterrows():
         if j["Email"] == email:
             img = Image.open("static/template/{}.png".format(j["Certificate"]))
             name_coord = {
-                "Appreciation": (750, 386),
-                "EES_Appreciation_Cult": (1180, 520),
-                "EES_Appreciation_Sports": (1180, 520),
-                "EES_Merit": (1190, 530),
-                "EES_participation": (1190, 565),
-                "Merit": (757, 386),
-                "Participation": (760, 383),
+                "EES_Appreciation_Coordinator": (1100, 598),
+                "EES_Appreciation_Core": (1100, 595),
+                "EES_Appreciation_Core_2": (1100, 595),
+                "EES_Merit": (1110, 595),
+                "EES_Participation": (1140, 600),
+                "Udyam_Appreciation": (680, 388),
+                "Udyam_Appreciation_2": (680, 388),
+                "Udyam_Merit": (757, 386),
+                "Udyam_Participation": (760, 390),
             }
             draw = ImageDraw.Draw(img)
             draw.text(
                 xy=name_coord.get(j["Certificate"]),
                 text="{}".format(j["Name"]),
                 fill=(0, 0, 0),
-                font=userfont
-                if j["Certificate"] == "Appreciation"
-                or j["Certificate"] == "Merit"
-                or j["Certificate"] == "Participation"
-                else userfont1,
+                font=userfont if j["Certificate"][0] == "U" else userfont1,
             )
-            if j["Certificate"] == "Appreciation":
+            draw.text(
+                xy=(1150, 2) if j["Certificate"][0] == "U" else (1735, 4),
+                text="{}".format(j["Serial Number"]),
+                fill=(0, 0, 0),
+                font=userfont0 if j["Certificate"][0] == "U" else userfont,
+            )
+            if j["Certificate"] == "EES_Appreciation_Coordinator":
                 draw.text(
-                    xy=(647, 550),
+                    xy=(980, 830),
                     text="{}".format(j["Designation"]),
                     fill=(0, 0, 0),
-                    font=userfont,
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(1330, 655),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(700, 715),
+                    text="{}".format(j["Category"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
                 )
             if (
-                j["Certificate"] == "EES_Appreciation_Cult"
-                or j["Certificate"] == "EES_Appreciation_Sports"
+                j["Certificate"] == "EES_Appreciation_Core"
+                or j["Certificate"] == "EES_Appreciation_Core_2"
             ):
                 draw.text(
-                    xy=(1100, 820),
+                    xy=(970, 660),
                     text="{}".format(j["Designation"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
             if j["Certificate"] == "EES_Merit":
                 draw.text(
-                    xy=(1030, 610),
+                    xy=(985, 657),
                     text="{}".format(j["Event"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
                 draw.text(
-                    xy=(950, 840),
+                    xy=(500, 725),
+                    text="{}".format(j["Category"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(950, 845),
                     text="{}".format(j["Position"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
-            if j["Certificate"] == "EES_participation":
+            if j["Certificate"] == "EES_Participation":
                 draw.text(
-                    xy=(950, 645),
+                    xy=(960, 670),
                     text="{}".format(j["Event"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
-            if j["Certificate"] == "Merit":
+                draw.text(
+                    xy=(500, 745),
+                    text="{}".format(j["Category"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+            if (
+                j["Certificate"] == "Udyam_Appreciation"
+                or j["Certificate"] == "Udyam_Appreciation_2"
+            ):
+                draw.text(
+                    xy=(630, 550),
+                    text="{}".format(j["Designation"]),
+                    fill=(0, 0, 0),
+                    font=userfont,
+                )
+            if j["Certificate"] == "Udyam_Merit":
                 draw.text(
                     xy=(547, 432),
                     text="{}".format(j["Event"]),
@@ -413,21 +452,22 @@ def createCerti(email):
                     fill=(0, 0, 0),
                     font=userfont,
                 )
-            if j["Certificate"] == "Participation":
+            if j["Certificate"] == "Udyam_Participation":
                 draw.text(
-                    xy=(647, 430),
+                    xy=(647, 435),
                     text="{}".format(j["Event"]),
                     fill=(0, 0, 0),
                     font=userfont,
                 )
             if (
-                j["Certificate"] == "Appreciation"
-                or j["Certificate"] == "EES_Appreciation_Cult"
-                or j["Certificate"] == "EES_Appreciation_Sports"
+                j["Certificate"] == "EES_Merit"
+                or j["Certificate"] == "EES_Participation"
+                or j["Certificate"] == "Udyam_Merit"
+                or j["Certificate"] == "Udyam_Participation"
             ):
-                img.save("static/certificates/{}.png".format(j["Designation"]))
-            else:
                 img.save("static/certificates/{}.png".format(j["Event"]))
+            else:
+                img.save("static/certificates/{}.png".format(j["Designation"]))
 
     shutil.make_archive("static/certificates", "zip", "static/certificates")
     zip_file = open("static/certificates.zip", "rb")
