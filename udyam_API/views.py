@@ -337,6 +337,7 @@ class TeamCountView(generics.GenericAPIView):
 
 def createCerti(email):
     df = pd.read_csv("static/results.csv")
+    userfont0 = ImageFont.truetype("static/Aller_Rg.ttf", 15)
     userfont = ImageFont.truetype("static/Aller_Rg.ttf", 33)
     userfont1 = ImageFont.truetype("static/Aller_Rg.ttf", 44)
     os.makedirs("static/certificates")
@@ -361,10 +362,28 @@ def createCerti(email):
                 fill=(0, 0, 0),
                 font=userfont if j["Certificate"][0] == "U" else userfont1,
             )
+            draw.text(
+                xy=(1150, 2) if j["Certificate"][0] == "U" else (1735, 4),
+                text="{}".format(j["Serial Number"]),
+                fill=(0, 0, 0),
+                font=userfont0 if j["Certificate"][0] == "U" else userfont,
+            )
             if j["Certificate"] == "EES_Appreciation_Coordinator":
                 draw.text(
                     xy=(980, 830),
                     text="{}".format(j["Designation"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(1330, 655),
+                    text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(700, 715),
+                    text="{}".format(j["Category"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
@@ -380,8 +399,14 @@ def createCerti(email):
                 )
             if j["Certificate"] == "EES_Merit":
                 draw.text(
-                    xy=(985, 655),
+                    xy=(985, 657),
                     text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(500, 725),
+                    text="{}".format(j["Category"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
@@ -395,6 +420,12 @@ def createCerti(email):
                 draw.text(
                     xy=(960, 670),
                     text="{}".format(j["Event"]),
+                    fill=(0, 0, 0),
+                    font=userfont1,
+                )
+                draw.text(
+                    xy=(500, 745),
+                    text="{}".format(j["Category"]),
                     fill=(0, 0, 0),
                     font=userfont1,
                 )
