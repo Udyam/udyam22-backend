@@ -465,9 +465,17 @@ def createCerti(email):
                 or j["Certificate"] == "Udyam_Merit"
                 or j["Certificate"] == "Udyam_Participation"
             ):
-                img.save("static/certificates/{}.png".format(j["Event"]))
+                img.save(
+                    "static/certificates/{}_{}.png".format(
+                        j["Event"], j["Serial Number"]
+                    )
+                )
             else:
-                img.save("static/certificates/{}.png".format(j["Designation"]))
+                img.save(
+                    "static/certificates/{}_{}.png".format(
+                        j["Designation"], j["Serial Number"]
+                    )
+                )
 
     shutil.make_archive("static/certificates", "zip", "static/certificates")
     zip_file = open("static/certificates.zip", "rb")
