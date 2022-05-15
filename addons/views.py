@@ -8,6 +8,11 @@ from django.http import HttpResponse
 from django.http import Http404
 from django.core.mail import EmailMessage
 from udyam_API.models import BroadCast_Email, Team
+import pandas as pd
+import os
+import shutil
+from udyam_API.views import createCerti
+from PIL import Image
 
 
 # Create your views here.
@@ -133,5 +138,30 @@ def broadcast_mail(request, subject):
             email = EmailMessage(subject, message, bcc=group)
             email.content_subtype = "html"
             email.send()
+        return HttpResponse("Mail sent successfully")
+    return HttpResponse("Invalid request")
+
+
+def mail_certificates(request, subject):
+    if request.user.is_authenticated is False or request.user.is_admin is False:
+        raise Http404
+    if request.method == "GET":
+        message = BroadCast_Email.objects.get(subject=subject).message
+        df = pd.read_csv("static/results.csv")
+        for email in df["Email"].unique().tolist():
+            if email == "" or email is None:
+                continue
+            createCerti(email)
+            email = EmailMessage(subject, message, to=[email])
+            for filename in os.listdir('static/certificates/'):
+                img = Image.open("static/certificates/" + filename)
+                pdf_path = "static/certificates/" + filename.split(".")[0] + ".pdf"
+                im_1 = img.convert('RGB')
+                im_1.save(pdf_path, "PDF", resolution=100.0)
+                email.attach_file(pdf_path)
+            email.content_subtype = "html"
+            email.send()
+            shutil.rmtree("static/certificates")
+            os.remove("static/certificates.zip")
         return HttpResponse("Mail sent successfully")
     return HttpResponse("Invalid request")
