@@ -342,7 +342,7 @@ def createCerti(email):
     userfont1 = ImageFont.truetype("static/Aller_Rg.ttf", 44)
     os.makedirs("static/certificates")
     for index, j in df.iterrows():
-        if j["Email"] == email:
+        if str(j["Email"]).replace(" ", "") == email:
             img = Image.open("static/template/{}.png".format(j["Certificate"]))
             name_coord = {
                 "EES_Appreciation_Coordinator": (1100, 598),
@@ -466,14 +466,14 @@ def createCerti(email):
                 or j["Certificate"] == "Udyam_Participation"
             ):
                 img.save(
-                    "static/certificates/{}_{}.png".format(
-                        j["Event"], j["Serial Number"]
+                    "static/certificates/{}_{}_{}.png".format(
+                        j["Event"], j["Serial Number"], index
                     )
                 )
             else:
                 img.save(
-                    "static/certificates/{}_{}.png".format(
-                        j["Designation"], j["Serial Number"]
+                    "static/certificates/{}_{}_{}.png".format(
+                        j["Designation"], j["Serial Number"], index
                     )
                 )
 

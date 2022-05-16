@@ -149,9 +149,10 @@ def mail_certificates(request, subject):
         message = BroadCast_Email.objects.get(subject=subject).message
         df = pd.read_csv("static/results.csv")
         for email in df["Email"].unique().tolist():
+            email = str(email)
             if email == "" or email is None:
                 continue
-            createCerti(email)
+            createCerti(email.replace(" ", ""))
             email = EmailMessage(subject, message, to=[email])
             for filename in os.listdir('static/certificates/'):
                 img = Image.open("static/certificates/" + filename)
